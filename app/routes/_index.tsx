@@ -7,10 +7,9 @@ import type {
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
-import {MockShopNotice} from '~/components/MockShopNotice';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{title: 'Shop | Home'}];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -34,7 +33,6 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
   ]);
 
   return {
-    isShopLinked: Boolean(context.env.PUBLIC_STORE_DOMAIN),
     featuredCollection: collections.nodes[0],
   };
 }
@@ -61,8 +59,7 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home">
-      {data.isShopLinked ? null : <MockShopNotice />}
+    <div className="flex flex-col gap-12">
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
@@ -78,19 +75,24 @@ function FeaturedCollection({
   const image = collection?.image;
   return (
     <Link
-      className="featured-collection"
+      className="group relative block overflow-hidden rounded-xl no-underline hover:no-underline"
       to={`/collections/${collection.handle}`}
     >
       {image && (
-        <div className="featured-collection-image">
+        <div className="aspect-square overflow-hidden bg-neutral-100 md:aspect-video">
           <Image
+            className="h-auto max-h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
             data={image}
             sizes="100vw"
             alt={image.altText || collection.title}
           />
         </div>
       )}
-      <h1>{collection.title}</h1>
+      <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 md:p-10">
+        <h1 className="text-2xl font-bold text-white md:text-4xl">
+          {collection.title}
+        </h1>
+      </div>
     </Link>
   );
 }
@@ -102,14 +104,23 @@ function RecommendedProducts({
 }) {
   return (
     <section
-      className="recommended-products"
+      className="flex flex-col gap-6"
       aria-labelledby="recommended-products"
     >
-      <h2 id="recommended-products">Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
+      <h2
+        id="recommended-products"
+        className="text-2xl font-bold tracking-tight text-neutral-900"
+      >
+        Recommended Products
+      </h2>
+      <Suspense
+        fallback={
+          <p className="text-sm text-neutral-500">Loading products…</p>
+        }
+      >
         <Await resolve={products}>
           {(response) => (
-            <div className="recommended-products-grid">
+            <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
               {response
                 ? response.products.nodes.map((product) => (
                     <ProductItem key={product.id} product={product} />
@@ -119,7 +130,6 @@ function RecommendedProducts({
           )}
         </Await>
       </Suspense>
-      <br />
     </section>
   );
 }

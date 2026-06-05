@@ -45,7 +45,12 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const withDiscount =
     cart &&
     Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
-  const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
+  const className = [
+    'h-full w-auto overflow-y-auto',
+    withDiscount
+      ? 'max-h-[calc(100vh-var(--cart-aside-summary-height-with-discount))]'
+      : 'max-h-[calc(100vh-var(--cart-aside-summary-height))]',
+  ].join(' ');
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
   const childrenMap = getLineItemChildrenMap(cart?.lines?.nodes ?? []);
 
@@ -55,12 +60,12 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
       aria-label={layout === 'page' ? 'Cart page' : 'Cart drawer'}
     >
       <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
+      <div className="flex flex-col gap-6">
         <p id="cart-lines" className="sr-only">
           Line items
         </p>
         <div>
-          <ul aria-labelledby="cart-lines">
+          <ul aria-labelledby="cart-lines" className="divide-y divide-neutral-200">
             {(cart?.lines?.nodes ?? []).map((line) => {
               // we do not render non-parent lines at the root of the cart
               if (
@@ -94,14 +99,17 @@ function CartEmpty({
 }) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
+    <div hidden={hidden} className="flex flex-col gap-4 py-4 text-center">
+      <p className="text-neutral-600">
         Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
         started!
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
+      <Link
+        to="/collections"
+        onClick={close}
+        prefetch="viewport"
+        className="inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-neutral-900 px-6 text-sm font-medium text-white no-underline transition hover:bg-neutral-800 hover:no-underline"
+      >
         Continue shopping →
       </Link>
     </div>

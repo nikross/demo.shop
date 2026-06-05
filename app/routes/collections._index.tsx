@@ -46,11 +46,13 @@ export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
+    <div className="flex flex-col gap-8">
+      <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+        Collections
+      </h1>
       <PaginatedResourceSection<CollectionFragment>
         connection={collections}
-        resourcesClassName="collections-grid"
+        resourcesClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       >
         {({node: collection, index}) => (
           <CollectionItem
@@ -73,21 +75,26 @@ function CollectionItem({
 }) {
   return (
     <Link
-      className="collection-item"
+      className="group flex flex-col gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-white no-underline transition hover:border-neutral-400 hover:no-underline hover:shadow-md"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"
     >
       {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
+        <div className="overflow-hidden rounded-t-lg bg-neutral-100">
+          <Image
+            alt={collection.image.altText || collection.title}
+            aspectRatio="1/1"
+            className="h-auto w-full transition duration-300 group-hover:scale-[1.02]"
+            data={collection.image}
+            loading={index < 3 ? 'eager' : undefined}
+            sizes="(min-width: 45em) 400px, 100vw"
+          />
+        </div>
       )}
-      <h5>{collection.title}</h5>
+      <h5 className="px-3 pb-3 text-base font-medium text-neutral-900">
+        {collection.title}
+      </h5>
     </Link>
   );
 }

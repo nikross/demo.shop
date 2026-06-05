@@ -3,6 +3,7 @@ import type {Route} from './+types/search';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {SearchForm} from '~/components/SearchForm';
 import {SearchResults} from '~/components/SearchResults';
+import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
 import {
   type RegularSearchReturn,
   type PredictiveSearchReturn,
@@ -14,7 +15,7 @@ import type {
 } from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
+  return [{title: `Shop | Search`}];
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {
@@ -41,30 +42,37 @@ export default function SearchPage() {
   if (type === 'predictive') return null;
 
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
+    <div className="flex flex-col gap-8">
+      <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+        Search
+      </h1>
+      <SearchForm className="flex w-full max-w-xl items-center gap-2">
         {({inputRef}) => (
           <>
             <input
+              className={`${inputClassName} m-0 min-w-0 flex-1`}
               defaultValue={term}
               name="q"
               placeholder="Search…"
               ref={inputRef}
               type="search"
             />
-            &nbsp;
-            <button type="submit">Search</button>
+            <button
+              type="submit"
+              className={`${primaryButtonClassName} shrink-0`}
+            >
+              Search
+            </button>
           </>
         )}
       </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
       {!term || !result?.total ? (
         <SearchResults.Empty />
       ) : (
         <SearchResults result={result} term={term}>
           {({articles, pages, products, term}) => (
-            <div>
+            <div className="flex flex-col gap-10">
               <SearchResults.Products products={products} term={term} />
               <SearchResults.Pages pages={pages} term={term} />
               <SearchResults.Articles articles={articles} term={term} />

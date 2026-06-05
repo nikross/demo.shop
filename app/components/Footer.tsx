@@ -17,7 +17,7 @@ export function Footer({
     <Suspense>
       <Await resolve={footerPromise}>
         {(footer) => (
-          <footer className="footer">
+          <footer className="mt-auto border-t border-neutral-200 bg-neutral-100">
             {footer?.menu && header.shop.primaryDomain?.url && (
               <FooterMenu
                 menu={footer.menu}
@@ -42,7 +42,10 @@ function FooterMenu({
   publicStoreDomain: string;
 }) {
   return (
-    <nav className="footer-menu" role="navigation">
+    <nav
+      className="flex flex-wrap justify-center gap-4 px-4 py-4"
+      role="navigation"
+    >
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
         if (!item.url) return null;
         // if the url is internal, we strip the domain
@@ -54,7 +57,13 @@ function FooterMenu({
             : item.url;
         const isExternal = !url.startsWith('/');
         return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
+          <a
+            href={url}
+            key={item.id}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="text-sm text-neutral-600 transition hover:text-neutral-900"
+          >
             {item.title}
           </a>
         ) : (
@@ -62,7 +71,15 @@ function FooterMenu({
             end
             key={item.id}
             prefetch="intent"
-            style={activeLinkStyle}
+            className={({isActive, isPending}) =>
+              [
+                'text-sm transition hover:text-neutral-900',
+                isPending ? 'text-neutral-400' : 'text-neutral-600',
+                isActive ? 'font-semibold text-neutral-900' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')
+            }
             to={url}
           >
             {item.title}
@@ -115,15 +132,3 @@ const FALLBACK_FOOTER_MENU = {
   ],
 };
 
-function activeLinkStyle({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
-}

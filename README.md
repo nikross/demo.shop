@@ -37,8 +37,13 @@ npm run build
 ## Local development
 
 ```bash
+cp .env.example .env
+# Set SESSION_SECRET in .env to any random string
+
 npm run dev
 ```
+
+The demo runs against [mock.shop](https://mock.shop) by default — no Shopify store link required.
 
 ## Setup for using Customer Account API (`/account` section)
 

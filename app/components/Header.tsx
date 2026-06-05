@@ -23,11 +23,16 @@ export function Header({
   cart,
   publicStoreDomain,
 }: HeaderProps) {
-  const {shop, menu} = header;
+  const {menu} = header;
   return (
     <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
+      <NavLink
+        prefetch="intent"
+        to="/"
+        end
+        className={headerNavLinkClassName}
+      >
+        <strong>Mock Shop</strong>
       </NavLink>
       <HeaderMenu
         menu={menu}
@@ -61,13 +66,15 @@ export function HeaderMenu({
           end
           onClick={close}
           prefetch="intent"
-          style={activeLinkStyle}
+          className={headerNavLinkClassName}
           to="/"
         >
           Home
         </NavLink>
       )}
-      {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
+      {(menu || FALLBACK_HEADER_MENU).items
+        .filter((item) => item.title.toLowerCase() !== 'news')
+        .map((item) => {
         if (!item.url) return null;
 
         // if the url is internal, we strip the domain
@@ -79,12 +86,13 @@ export function HeaderMenu({
             : item.url;
         return (
           <NavLink
-            className="header-menu-item"
+            className={({isActive, isPending}) =>
+              `header-menu-item ${headerNavLinkClassName({isActive, isPending})}`
+            }
             end
             key={item.id}
             onClick={close}
             prefetch="intent"
-            style={activeLinkStyle}
             to={url}
           >
             {item.title}
@@ -102,13 +110,34 @@ function HeaderCtas({
   return (
     <nav className="header-ctas" role="navigation">
       <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
+      <Suspense
+        fallback={
+          <NavLink prefetch="intent" to="/login" className={headerNavLinkClassName}>
+            Sign in
+          </NavLink>
+        }
+      >
+        <Await
+          resolve={isLoggedIn}
+          errorElement={
+            <NavLink prefetch="intent" to="/login" className={headerNavLinkClassName}>
+              Sign in
+            </NavLink>
+          }
+        >
+          {(loggedIn) =>
+            loggedIn ? (
+              <NavLink prefetch="intent" to="/account" className={headerNavLinkClassName}>
+                Account
+              </NavLink>
+            ) : (
+              <NavLink prefetch="intent" to="/login" className={headerNavLinkClassName}>
+                Sign in
+              </NavLink>
+            )
+          }
+        </Await>
+      </Suspense>
       <SearchToggle />
       <CartToggle cart={cart} />
     </nav>
@@ -130,7 +159,11 @@ function HeaderMenuMobileToggle() {
 function SearchToggle() {
   const {open} = useAside();
   return (
-    <button className="reset" onClick={() => open('search')}>
+    <button
+      type="button"
+      className={headerNavButtonClassName}
+      onClick={() => open('search')}
+    >
       Search
     </button>
   );
@@ -141,10 +174,10 @@ function CartBadge({count}: {count: number}) {
   const {publish, shop, cart, prevCart} = useAnalytics();
 
   return (
-    <a
-      href="/cart"
-      onClick={(e) => {
-        e.preventDefault();
+    <button
+      type="button"
+      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+      onClick={() => {
         open('cart');
         publish('cart_viewed', {
           cart,
@@ -154,8 +187,8 @@ function CartBadge({count}: {count: number}) {
         } as CartViewPayload);
       }}
     >
-      Cart <span aria-label={`(items: ${count})`}>{count}</span>
-    </a>
+      Cart ({count})
+    </button>
   );
 }
 
@@ -217,15 +250,14 @@ const FALLBACK_HEADER_MENU = {
   ],
 };
 
-function activeLinkStyle({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'black',
-  };
-}
+const headerNavLinkClassName = ({isActive, isPending}: {isActive: boolean; isPending: boolean}) =>
+  [
+    'text-black no-underline transition hover:no-underline hover:opacity-80',
+    isActive ? 'font-bold' : 'font-normal',
+    isPending ? 'text-neutral-400' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+const headerNavButtonClassName =
+  'cursor-pointer border-0 bg-transparent p-0 text-base font-normal text-black no-underline transition hover:no-underline hover:opacity-80';

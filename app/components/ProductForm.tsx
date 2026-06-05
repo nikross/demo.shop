@@ -17,16 +17,27 @@ export function ProductForm({
 }) {
   const navigate = useNavigate();
   const {open} = useAside();
+  const optionButtonClass = (selected: boolean, available: boolean) =>
+    [
+      'cursor-pointer rounded-md border px-3 py-2 text-sm no-underline transition hover:no-underline',
+      selected
+        ? 'border-neutral-900 ring-2 ring-neutral-900 ring-offset-1'
+        : 'border-neutral-200 hover:border-neutral-400',
+      available ? 'opacity-100' : 'opacity-30',
+    ].join(' ');
+
   return (
-    <div className="product-form">
+    <div className="flex flex-col gap-6">
       {productOptions.map((option) => {
         // If there is only a single value in the option values, don't display the option
         if (option.optionValues.length === 1) return null;
 
         return (
-          <div className="product-options" key={option.name}>
-            <h5>{option.name}</h5>
-            <div className="product-options-grid">
+          <div className="flex flex-col gap-3" key={option.name}>
+            <h5 className="text-sm font-medium uppercase tracking-wide text-neutral-700">
+              {option.name}
+            </h5>
+            <div className="flex flex-wrap gap-2">
               {option.optionValues.map((value) => {
                 const {
                   name,
@@ -46,18 +57,12 @@ export function ProductForm({
                   // as an anchor tag
                   return (
                     <Link
-                      className="product-options-item"
+                      className={optionButtonClass(selected, available)}
                       key={option.name + name}
                       prefetch="intent"
                       preventScrollReset
                       replace
                       to={`/products/${handle}?${variantUriQuery}`}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                     >
                       <ProductOptionSwatch swatch={swatch} name={name} />
                     </Link>
@@ -71,16 +76,11 @@ export function ProductForm({
                   return (
                     <button
                       type="button"
-                      className={`product-options-item${
-                        exists && !selected ? ' link' : ''
-                      }`}
+                      className={[
+                        optionButtonClass(selected, available),
+                        exists && !selected ? 'cursor-pointer' : '',
+                      ].join(' ')}
                       key={option.name + name}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
                       disabled={!exists}
                       onClick={() => {
                         if (!selected) {
@@ -97,7 +97,6 @@ export function ProductForm({
                 }
               })}
             </div>
-            <br />
           </div>
         );
       })}
@@ -139,12 +138,14 @@ function ProductOptionSwatch({
   return (
     <div
       aria-label={name}
-      className="product-option-label-swatch"
+      className="mx-1 my-1 size-5 overflow-hidden rounded-full"
       style={{
         backgroundColor: color || 'transparent',
       }}
     >
-      {!!image && <img src={image} alt={name} />}
+      {!!image && (
+        <img src={image} alt={name} className="size-full object-cover" />
+      )}
     </div>
   );
 }

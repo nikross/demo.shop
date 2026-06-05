@@ -15,7 +15,7 @@ import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `Shop | ${data?.product.title ?? ''}`},
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -98,27 +98,29 @@ export default function Product() {
   const {title, descriptionHtml} = product;
 
   return (
-    <div className="product">
+    <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
       <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
+      <div className="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
+        <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+          {title}
+        </h1>
         <ProductPrice
           price={selectedVariant?.price}
           compareAtPrice={selectedVariant?.compareAtPrice}
         />
-        <br />
         <ProductForm
           productOptions={productOptions}
           selectedVariant={selectedVariant}
         />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+        <section className="border-t border-neutral-200 pt-6">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-700">
+            Description
+          </h2>
+          <div
+            className="prose-neutral text-neutral-600 leading-relaxed [&_a]:text-neutral-900 [&_a]:underline [&_li]:mb-1 [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5"
+            dangerouslySetInnerHTML={{__html: descriptionHtml}}
+          />
+        </section>
       </div>
       <Analytics.ProductView
         data={{

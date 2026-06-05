@@ -22,13 +22,16 @@ export function PaginatedResourceSection<NodesType>({
           children({node, index}),
         );
 
+        const paginationLinkClass =
+          'inline-flex items-center gap-1 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:border-neutral-900 hover:text-neutral-900';
+
         return (
-          <div>
+          <div className="flex flex-col gap-6">
             <PreviousLink>
               {isLoading ? (
-                'Loading...'
+                <span className="text-sm text-neutral-500">Loading...</span>
               ) : (
-                <span>
+                <span className={paginationLinkClass}>
                   <span aria-hidden="true">↑</span> Load previous
                 </span>
               )}
@@ -46,9 +49,9 @@ export function PaginatedResourceSection<NodesType>({
             )}
             <NextLink>
               {isLoading ? (
-                'Loading...'
+                <span className="text-sm text-neutral-500">Loading...</span>
               ) : (
-                <span>
+                <span className={paginationLinkClass}>
                   Load more <span aria-hidden="true">↓</span>
                 </span>
               )}

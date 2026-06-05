@@ -1,5 +1,7 @@
 import * as serverBuild from 'virtual:react-router/server-build';
 import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
+import {handleAuthApiRequest} from '~/lib/auth-middleware';
+import {handleOrderApiRequest} from '~/lib/order-middleware';
 import {createHydrogenRouterContext} from '~/lib/context';
 
 /**
@@ -12,6 +14,16 @@ export default {
     executionContext: ExecutionContext,
   ): Promise<Response> {
     try {
+      const authResponse = await handleAuthApiRequest(request);
+      if (authResponse) {
+        return authResponse;
+      }
+
+      const orderResponse = await handleOrderApiRequest(request);
+      if (orderResponse) {
+        return orderResponse;
+      }
+
       const hydrogenContext = await createHydrogenRouterContext(
         request,
         env,

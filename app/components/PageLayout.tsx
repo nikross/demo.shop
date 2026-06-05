@@ -14,6 +14,7 @@ import {
   SearchFormPredictive,
 } from '~/components/SearchFormPredictive';
 import {SearchResultsPredictive} from '~/components/SearchResultsPredictive';
+import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;
@@ -45,7 +46,9 @@ export function PageLayout({
           publicStoreDomain={publicStoreDomain}
         />
       )}
-      <main>{children}</main>
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+        {children}
+      </main>
       <Footer
         footer={footer}
         header={header}
@@ -74,21 +77,26 @@ function SearchAside() {
   return (
     <Aside type="search" heading="SEARCH">
       <div className="predictive-search">
-        <br />
-        <SearchFormPredictive>
+        <SearchFormPredictive className="predictive-search-form flex w-full items-center gap-2">
           {({fetchResults, goToSearch, inputRef}) => (
             <>
               <input
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder="Search…"
                 ref={inputRef}
                 type="search"
                 list={queriesDatalistId}
+                className={`${inputClassName} m-0 min-w-0 flex-1`}
               />
-              &nbsp;
-              <button onClick={goToSearch}>Search</button>
+              <button
+                type="button"
+                onClick={goToSearch}
+                className={`${primaryButtonClassName} shrink-0`}
+              >
+                Search
+              </button>
             </>
           )}
         </SearchFormPredictive>

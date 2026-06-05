@@ -7,13 +7,16 @@ export function ProductImage({
   image: ProductVariantFragment['image'];
 }) {
   if (!image) {
-    return <div className="product-image" />;
+    return (
+      <div className="aspect-square w-full rounded-lg bg-neutral-100" />
+    );
   }
   return (
-    <div className="product-image">
+    <div className="overflow-hidden rounded-lg bg-neutral-100">
       <Image
         alt={image.altText || 'Product Image'}
         aspectRatio="1/1"
+        className="h-auto w-full"
         data={image}
         key={image.id}
         sizes="(min-width: 45em) 50vw, 100vw"
