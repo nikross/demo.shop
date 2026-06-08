@@ -1,0 +1,21 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import {getAllPolicies} from '~/lib/catalog';
+
+const policies = getAllPolicies();
+---
+
+<Layout title="Shop | Policies">
+  <div class="mx-auto flex max-w-2xl flex-col gap-6">
+    <h1 class="text-3xl font-bold tracking-tight text-neutral-900">Policies</h1>
+    <ul class="flex flex-col gap-2">
+      {policies.map((policy) => (
+        <li>
+          <a href={`/policies/${policy.handle}`} class="text-neutral-700 underline hover:text-neutral-900">
+            {policy.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Layout>

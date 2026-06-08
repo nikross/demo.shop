@@ -1,0 +1,32 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Pagination from '~/components/Pagination.astro';
+import ProductItem from '~/components/ProductItem.astro';
+import {getCollectionByHandle, getCollectionProducts, paginate} from '~/lib/catalog';
+import {getPaginationVariables} from '~/lib/pagination';
+
+const {handle} = Astro.params;
+const collection = handle ? getCollectionByHandle(handle) : undefined;
+if (!collection) return Astro.redirect('/404');
+
+const pagination = getPaginationVariables(Astro.request, {pageBy: 8});
+const products = paginate(getCollectionProducts(collection), pagination);
+---
+
+<Layout title={`Shop | ${collection.title} Collection`}>
+  <div class="flex flex-col gap-8">
+    <header class="flex flex-col gap-3">
+      <h1 class="text-3xl font-bold tracking-tight text-neutral-900">{collection.title}</h1>
+      {collection.description && (
+        <p class="max-w-2xl text-neutral-600 leading-relaxed">{collection.description}</p>
+      )}
+    </header>
+    <Pagination connection={products}>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.nodes.map((product, index) => (
+          <ProductItem product={product} loading={index < 8 ? 'eager' : undefined} />
+        ))}
+      </div>
+    </Pagination>
+  </div>
+</Layout>

@@ -1,0 +1,23 @@
+---
+import type {ShopImage as ShopImageType} from '~/lib/types';
+
+interface Props {
+  image: ShopImageType;
+  alt?: string;
+  class?: string;
+  width?: number;
+  height?: number;
+  loading?: 'eager' | 'lazy';
+}
+
+const {image, alt, class: className, width, height, loading} = Astro.props;
+---
+
+<img
+  src={image.url}
+  alt={alt ?? image.altText ?? ''}
+  class={className}
+  width={width ?? image.width ?? undefined}
+  height={height ?? image.height ?? undefined}
+  loading={loading}
+/>

@@ -1,0 +1,24 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Pagination from '~/components/Pagination.astro';
+import {getAllBlogs, paginate} from '~/lib/catalog';
+import {getPaginationVariables} from '~/lib/pagination';
+
+const pagination = getPaginationVariables(Astro.request, {pageBy: 10});
+const blogs = paginate(getAllBlogs(), pagination);
+---
+
+<Layout title="Shop | Blog">
+  <div class="flex flex-col gap-8">
+    <h1 class="text-3xl font-bold tracking-tight text-neutral-900">Blog</h1>
+    <Pagination connection={blogs}>
+      <div class="flex flex-col gap-4">
+        {blogs.nodes.map((blog) => (
+          <a href={`/blogs/${blog.handle}`} class="text-lg font-medium text-neutral-900 underline">
+            {blog.title}
+          </a>
+        ))}
+      </div>
+    </Pagination>
+  </div>
+</Layout>

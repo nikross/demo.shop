@@ -1,0 +1,35 @@
+---
+import ShopImage from '~/components/ShopImage.astro';
+import EurMoney from '~/components/EurMoney.astro';
+import type {ProductSummary} from '~/lib/types';
+
+interface Props {
+  product: ProductSummary;
+  loading?: 'eager' | 'lazy';
+}
+
+const {product, loading} = Astro.props;
+const image = product.featuredImage;
+---
+
+<a
+  href={`/products/${product.handle}`}
+  class="group flex flex-col gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-white no-underline transition hover:border-neutral-400 hover:no-underline hover:shadow-md"
+>
+  {image && (
+    <div class="overflow-hidden rounded-t-lg bg-neutral-100">
+      <ShopImage
+        image={image}
+        alt={image.altText || product.title}
+        class="aspect-square h-auto w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+        loading={loading}
+      />
+    </div>
+  )}
+  <div class="flex flex-col gap-1 px-3 pb-3">
+    <h4 class="text-sm font-medium text-neutral-900">{product.title}</h4>
+    <small class="text-sm text-neutral-600">
+      <EurMoney amount={product.priceRange.minVariantPrice.amount} />
+    </small>
+  </div>
+</a>

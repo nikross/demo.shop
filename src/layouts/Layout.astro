@@ -1,0 +1,33 @@
+---
+import '~/styles/app.css';
+import {PageShell} from '~/components/PageShell';
+import {getFooterMenu, getHeaderMenu} from '~/lib/catalog';
+
+const {title = 'Shop'} = Astro.props;
+const cart = await Astro.locals.cart.get();
+const headerMenu = getHeaderMenu();
+const footerMenu = getFooterMenu();
+const currentPath = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <PageShell
+      client:load
+      headerMenu={headerMenu}
+      footerMenu={footerMenu}
+      cart={cart}
+      isLoggedIn={Astro.locals.isLoggedIn}
+      currentPath={currentPath}
+    >
+      <slot />
+    </PageShell>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import Pagination from '~/components/Pagination.astro';
+import ProductItem from '~/components/ProductItem.astro';
+import {getAllProductSummaries, paginate} from '~/lib/catalog';
+import {getPaginationVariables} from '~/lib/pagination';
+
+const pagination = getPaginationVariables(Astro.request, {pageBy: 8});
+const products = paginate(getAllProductSummaries(), pagination);
+---
+
+<Layout title="Shop | All Products">
+  <div class="flex flex-col gap-8">
+    <h1 class="text-3xl font-bold tracking-tight text-neutral-900">Products</h1>
+    <Pagination connection={products}>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.nodes.map((product, index) => (
+          <ProductItem product={product} loading={index < 8 ? 'eager' : undefined} />
+        ))}
+      </div>
+    </Pagination>
+  </div>
+</Layout>

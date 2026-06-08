@@ -1,0 +1,52 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import ShopImage from '~/components/ShopImage.astro';
+import EurMoney from '~/components/EurMoney.astro';
+import {ProductForm} from '~/components/ProductForm';
+import {getProductByHandle} from '~/lib/catalog';
+import {
+  findMatchingVariant,
+  getProductOptions,
+  getSelectedOptionsFromRequest,
+} from '~/lib/product-options';
+
+const {handle} = Astro.params;
+const product = handle ? getProductByHandle(handle) : undefined;
+if (!product) return Astro.redirect('/404');
+
+const selectedOptions = getSelectedOptionsFromRequest(Astro.request, product);
+const selectedVariant = findMatchingVariant(product, selectedOptions);
+const productOptions = getProductOptions(product, selectedVariant);
+const basePath = `/products/${product.handle}`;
+const image = selectedVariant?.image ?? product.featuredImage;
+---
+
+<Layout title={`Shop | ${product.title}`}>
+  <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+    {image ? (
+      <div class="overflow-hidden rounded-lg bg-neutral-100">
+        <ShopImage image={image} alt={product.title} class="aspect-square w-full object-cover" />
+      </div>
+    ) : (
+      <div class="aspect-square w-full rounded-lg bg-neutral-100" />
+    )}
+    <div class="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
+      <h1 class="text-3xl font-bold tracking-tight text-neutral-900">{product.title}</h1>
+      {selectedVariant && (
+        <p class="text-lg font-semibold text-neutral-900">
+          <EurMoney amount={selectedVariant.price.amount} />
+        </p>
+      )}
+      <ProductForm
+        client:load
+        productOptions={productOptions}
+        selectedVariant={selectedVariant}
+        basePath={basePath}
+      />
+      <section class="border-t border-neutral-200 pt-6">
+        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-neutral-700">Description</h2>
+        <div class="prose-neutral text-neutral-600 leading-relaxed" set:html={product.descriptionHtml} />
+      </section>
+    </div>
+  </div>
+</Layout>

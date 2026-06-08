@@ -1,0 +1,15 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import {getPageByHandle} from '~/lib/catalog';
+
+const {handle} = Astro.params;
+const page = handle ? getPageByHandle(handle) : undefined;
+if (!page) return Astro.redirect('/404');
+---
+
+<Layout title={`Shop | ${page.title}`}>
+  <div class="mx-auto flex max-w-3xl flex-col gap-6">
+    <h1 class="text-3xl font-bold tracking-tight text-neutral-900">{page.title}</h1>
+    <div class="prose-neutral text-neutral-600 leading-relaxed" set:html={page.body} />
+  </div>
+</Layout>

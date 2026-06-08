@@ -1,0 +1,46 @@
+---
+import type {PaginatedConnection} from '~/lib/types';
+
+interface Props {
+  connection: PaginatedConnection<unknown>;
+}
+
+const {connection} = Astro.props;
+const url = Astro.url;
+const prevCursor = connection.pageInfo.hasPreviousPage
+  ? String(Number(connection.pageInfo.startCursor ?? 0) - 1)
+  : null;
+const nextCursor = connection.pageInfo.hasNextPage
+  ? connection.pageInfo.endCursor
+  : null;
+
+function linkFor(cursor: string | null) {
+  if (!cursor) return null;
+  const params = new URLSearchParams(url.searchParams);
+  params.set('cursor', cursor);
+  return `?${params.toString()}`;
+}
+
+const prevLink = linkFor(prevCursor);
+const nextLink = linkFor(nextCursor);
+const paginationLinkClass =
+  'inline-flex items-center gap-1 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:border-neutral-900 hover:text-neutral-900';
+---
+
+<div class="flex flex-col gap-6">
+  {prevLink ? (
+    <a href={prevLink} class={paginationLinkClass}>
+      <span aria-hidden="true">↑</span> Load previous
+    </a>
+  ) : (
+    <span hidden />
+  )}
+  <slot />
+  {nextLink ? (
+    <a href={nextLink} class={paginationLinkClass}>
+      Load more <span aria-hidden="true">↓</span>
+    </a>
+  ) : (
+    <span hidden />
+  )}
+</div>

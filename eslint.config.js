@@ -27,11 +27,8 @@ export default [
       '**/node_modules/',
       '**/build/',
       '**/dist/',
-      '**/*.graphql.d.ts',
-      '**/*.graphql.ts',
-      '**/*.generated.d.ts',
-      '**/.react-router/',
-      '**/packages/hydrogen/dist/',
+      '**/.astro/',
+      '**/dist/',
     ],
   },
   ...fixupConfigRules(
@@ -110,17 +107,7 @@ export default [
       react: {
         version: 'detect',
       },
-      formComponents: ['Form'],
-      linkComponents: [
-        {
-          name: 'Link',
-          linkAttribute: 'to',
-        },
-        {
-          name: 'NavLink',
-          linkAttribute: 'to',
-        },
-      ],
+      linkComponents: [],
       'import/resolver': {
         typescript: {},
       },

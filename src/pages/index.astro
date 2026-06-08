@@ -1,0 +1,43 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import ShopImage from '~/components/ShopImage.astro';
+import ProductItem from '~/components/ProductItem.astro';
+import {getFeaturedCollection, getRecommendedProducts} from '~/lib/catalog';
+
+const featuredCollection = getFeaturedCollection();
+const recommendedProducts = getRecommendedProducts(4);
+---
+
+<Layout title="Shop | Home">
+  <div class="flex flex-col gap-12">
+    {featuredCollection && (
+      <a
+        href={`/collections/${featuredCollection.handle}`}
+        class="group relative block overflow-hidden rounded-xl no-underline hover:no-underline"
+      >
+        {featuredCollection.image && (
+          <div class="aspect-square overflow-hidden bg-neutral-100 md:aspect-video">
+            <ShopImage
+              image={featuredCollection.image}
+              alt={featuredCollection.image.altText || featuredCollection.title}
+              class="h-auto max-h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+            />
+          </div>
+        )}
+        <div class="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6 md:p-10">
+          <h1 class="text-2xl font-bold text-white md:text-4xl">{featuredCollection.title}</h1>
+        </div>
+      </a>
+    )}
+    <section class="flex flex-col gap-6" aria-labelledby="recommended-products">
+      <h2 id="recommended-products" class="text-2xl font-bold tracking-tight text-neutral-900">
+        Recommended Products
+      </h2>
+      <div class="grid grid-cols-2 gap-6 lg:grid-cols-4">
+        {recommendedProducts.map((product) => (
+          <ProductItem product={product} />
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>

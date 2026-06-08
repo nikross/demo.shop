@@ -1,0 +1,13 @@
+---
+interface Props {
+  amount: string;
+}
+
+const {amount} = Astro.props;
+const formatted = new Intl.NumberFormat('de-DE', {
+  style: 'currency',
+  currency: 'EUR',
+}).format(Number(amount));
+---
+
+<span>{formatted}</span>

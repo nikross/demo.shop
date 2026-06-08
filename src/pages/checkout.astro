@@ -1,0 +1,10 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import {CheckoutForm} from '~/components/CheckoutForm';
+
+const cart = await Astro.locals.cart.get();
+---
+
+<Layout title="Shop | Checkout">
+  <CheckoutForm client:load cart={cart} />
+</Layout>

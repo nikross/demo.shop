@@ -1,50 +1,59 @@
-# Hydrogen template: Skeleton
+# Mock Shop
 
-Hydrogen is Shopify’s stack for headless commerce. Hydrogen is designed to dovetail with [Remix](https://remix.run/), Shopify’s full stack web framework. This template contains a **minimal setup** of components, queries and tooling to get started with Hydrogen.
+A simple demo storefront built with **Astro SSR** and React islands. Product data is stored in `data/catalog.json` with images in `public/images/`. No Shopify, Hydrogen, or Oxygen dependencies.
 
-[Check out Hydrogen docs](https://shopify.dev/custom-storefronts/hydrogen)
-[Get familiar with Remix](https://remix.run/docs/en/v1)
+Originally scaffolded from Shopify's [Hydrogen Skeleton](https://github.com/Shopify/hydrogen/tree/main/templates/skeleton) starter (`npm create @shopify/hydrogen`), then adapted into a standalone mock shop.
 
-## What's included
+## Requirements
 
-- Remix
-- Hydrogen
-- Oxygen
-- Vite
-- Shopify CLI
-- ESLint
-- Prettier
-- GraphQL generator
-- TypeScript and JavaScript flavors
-- Minimal setup of components and routes
+- Node.js 22 or 24
 
 ## Getting started
 
-**Requirements:**
-
-- Node.js version 18.0.0 or higher
-
 ```bash
-npm create @shopify/hydrogen@latest
-```
-
-## Building for production
-
-```bash
-npm run build
-```
-
-## Local development
-
-```bash
-cp .env.example .env
-# Set SESSION_SECRET in .env to any random string
-
+npm install
 npm run dev
 ```
 
-The demo runs against [mock.shop](https://mock.shop) by default — no Shopify store link required.
+Open [http://localhost:4321](http://localhost:4321) (Astro dev default).
 
-## Setup for using Customer Account API (`/account` section)
+## Scripts
 
-Follow step 1 and 2 of <https://shopify.dev/docs/custom-storefronts/building-with-the-customer-account-api/hydrogen#step-1-set-up-a-public-domain-for-local-development>
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Astro dev server |
+| `npm run build` | Build for production |
+| `npm start` | Run production server (after build) |
+| `npm run preview` | Preview production build locally |
+| `npm run fetch-data` | Re-fetch catalog data from mock.shop |
+
+## Demo credentials
+
+- **Login:** `jon@gmail.com` / `12345`
+- **Checkout:** pre-filled mock payment details on the checkout page
+
+Auth, signup, and checkout endpoints accept form data and return success responses without persisting anything.
+
+## Deployment
+
+Build and run with any Node.js host (Dokploy, Railway, Fly.io, etc.):
+
+```bash
+npm run build
+NODE_ENV=production npm start
+```
+
+Set `PORT` if your host requires a specific port. Docker:
+
+```bash
+docker build -t mock-shop .
+docker run -p 3000:3000 mock-shop
+```
+
+## Data
+
+Catalog data was pulled from [mock.shop](https://mock.shop) and stored locally. To refresh:
+
+```bash
+npm run fetch-data
+```

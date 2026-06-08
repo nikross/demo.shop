@@ -1,0 +1,83 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import ShopImage from '~/components/ShopImage.astro';
+import EurMoney from '~/components/EurMoney.astro';
+import {searchCatalog} from '~/lib/catalog';
+import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
+
+const term = Astro.url.searchParams.get('q') ?? '';
+const limit = 10;
+const searchResult = term ? searchCatalog(term, limit) : null;
+---
+
+<Layout title="Shop | Search">
+  <div class="flex flex-col gap-8">
+    <h1 class="text-3xl font-bold tracking-tight text-neutral-900">Search</h1>
+    <form method="GET" action="/search" class="flex w-full max-w-xl items-center gap-2">
+      <input
+        class={`${inputClassName} m-0 min-w-0 flex-1`}
+        name="q"
+        type="search"
+        placeholder="Search…"
+        value={term}
+      />
+      <button type="submit" class={`${primaryButtonClassName} shrink-0`}>Search</button>
+    </form>
+
+    {!term || !searchResult?.total ? (
+      <p class="text-neutral-600">No results, try a different search.</p>
+    ) : (
+      <div class="flex flex-col gap-10">
+        {searchResult.products.nodes.length > 0 && (
+          <section class="flex flex-col gap-4">
+            <h2 class="text-xl font-semibold text-neutral-900">Products</h2>
+            <ul class="flex flex-col gap-2">
+              {searchResult.products.nodes.map((product) => (
+                <li>
+                  <a
+                    href={`/products/${product.handle}?q=${encodeURIComponent(term)}`}
+                    class="flex items-center gap-4 rounded-lg border border-neutral-200 p-3 transition hover:border-neutral-400 hover:bg-neutral-50"
+                  >
+                    {product.featuredImage && (
+                      <ShopImage image={product.featuredImage} alt={product.title} class="size-14 rounded-md object-cover" width={50} />
+                    )}
+                    <div>
+                      <p class="font-medium text-neutral-900">{product.title}</p>
+                      <small class="text-sm text-neutral-600">
+                        <EurMoney amount={product.priceRange.minVariantPrice.amount} />
+                      </small>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {searchResult.pages.nodes.length > 0 && (
+          <section class="flex flex-col gap-4">
+            <h2 class="text-xl font-semibold text-neutral-900">Pages</h2>
+            <ul class="flex flex-col gap-2">
+              {searchResult.pages.nodes.map((page) => (
+                <li><a href={`/pages/${page.handle}`} class="underline">{page.title}</a></li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {searchResult.articles.nodes.length > 0 && (
+          <section class="flex flex-col gap-4">
+            <h2 class="text-xl font-semibold text-neutral-900">Articles</h2>
+            <ul class="flex flex-col gap-2">
+              {searchResult.articles.nodes.map((article) => (
+                <li>
+                  <a href={`/blogs/${article.blogHandle}/${article.handle}`} class="underline">
+                    {article.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    )}
+  </div>
+</Layout>

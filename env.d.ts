@@ -1,7 +1,10 @@
-/// <reference types="vite/client" />
-/// <reference types="react-router" />
-/// <reference types="@shopify/oxygen-workers-types" />
-/// <reference types="@shopify/hydrogen/react-router-types" />
+/// <reference types="astro/client" />
 
-// Enhance TypeScript's built-in typings.
-import '@total-typescript/ts-reset';
+type CartService = import('~/lib/types').CartService;
+
+declare namespace App {
+  interface Locals {
+    cart: CartService;
+    isLoggedIn: boolean;
+  }
+}
