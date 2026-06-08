@@ -42,7 +42,7 @@ Deploy with [Railpack](https://railpack.com) (Dokploy, Railway, etc.):
 - **Start:** `npm run start` → `node ./dist/server/entry.mjs`
 - **Node:** 22 (from `engines` / `.node-version`)
 
-`railpack.json` uses `npm install` (not `npm ci`) so Linux builds resolve platform-specific optional dependencies correctly.
+`railpack.json` overrides the install step to copy `package.json` / `package-lock.json` and run `npm install` (not `npm ci`) so Linux builds resolve platform-specific optional dependencies correctly.
 
 Set these environment variables on your host:
 
