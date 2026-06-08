@@ -36,15 +36,22 @@ Auth, signup, and checkout endpoints accept form data and return success respons
 
 ## Deployment
 
-Deploy with [Railpack](https://railpack.com) (Dokploy, Railway, etc.):
+### Dokploy (recommended: Docker)
 
-- **Build:** `npm run build` (via Railpack)
-- **Start:** `npm run start` → `node ./dist/server/entry.mjs`
-- **Node:** 22 (from `engines` / `.node-version`)
+Use **Dockerfile** as the build type. Railpack does not ship binaries for `arm64-unknown-linux-musl`, which Dokploy's build host requires.
 
-`railpack.json` overrides the install step to copy `package.json` / `package-lock.json` and run `npm install` (not `npm ci`) so Linux builds resolve platform-specific optional dependencies correctly.
+```bash
+docker build -t mock-shop .
+docker run -p 3000:3000 mock-shop
+```
 
-Set these environment variables on your host:
+In Dokploy: set build type to **Dockerfile**, container port **3000**.
+
+### Railway / other Railpack hosts
+
+`railpack.json` is included for platforms with Railpack support. It uses `npm install` (not `npm ci`) so Linux builds resolve platform-specific optional dependencies correctly.
+
+### Environment
 
 | Variable | Value |
 |----------|-------|
