@@ -36,18 +36,27 @@ Auth, signup, and checkout endpoints accept form data and return success respons
 
 ## Deployment
 
-Build and run with any Node.js host (Dokploy, Railway, Fly.io, etc.):
+Deploy with [Railpack](https://railpack.com) (Dokploy, Railway, etc.):
+
+- **Build:** `npm run build` (via Railpack)
+- **Start:** `npm run start` → `node ./dist/server/entry.mjs`
+- **Node:** 22 (from `engines` / `.node-version`)
+
+`railpack.json` uses `npm install` (not `npm ci`) so Linux builds resolve platform-specific optional dependencies correctly.
+
+Set these environment variables on your host:
+
+| Variable | Value |
+|----------|-------|
+| `HOST` | `0.0.0.0` |
+| `PORT` | whatever your platform assigns (e.g. `3000`) |
+| `NODE_ENV` | `production` |
+
+Local production test:
 
 ```bash
 npm run build
-NODE_ENV=production npm start
-```
-
-Set `PORT` if your host requires a specific port. Docker:
-
-```bash
-docker build -t mock-shop .
-docker run -p 3000:3000 mock-shop
+HOST=0.0.0.0 PORT=3000 npm start
 ```
 
 ## Data

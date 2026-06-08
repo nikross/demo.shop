@@ -5,3 +5,5 @@ node_modules
 .env
 .astro
 *.tsbuildinfo
+.DS_Store
+pnpm-lock.yaml
