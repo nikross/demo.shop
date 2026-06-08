@@ -12,7 +12,15 @@ export function LoginForm() {
     setIsSubmitting(true);
     setResult(null);
     const form = event.currentTarget;
-    const response = await fetch('/api/auth/login', {method: 'POST', body: new FormData(form)});
+    const formData = new FormData(form);
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: String(formData.get('email') ?? ''),
+        password: String(formData.get('password') ?? ''),
+      }),
+    });
     setResult((await response.json()) as AuthResult);
     setIsSubmitting(false);
   }

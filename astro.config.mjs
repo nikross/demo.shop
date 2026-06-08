@@ -7,6 +7,9 @@ import {fileURLToPath} from 'node:url';
 export default defineConfig({
   output: 'server',
   adapter: node({mode: 'standalone'}),
+  security: {
+    checkOrigin: false,
+  },
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

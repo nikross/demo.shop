@@ -16,7 +16,19 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
     setIsSubmitting(true);
     setResult(null);
     const form = event.currentTarget;
-    const response = await fetch('/api/order', {method: 'POST', body: new FormData(form)});
+    const formData = new FormData(form);
+    const response = await fetch('/api/order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email: String(formData.get('email') ?? ''),
+        name: String(formData.get('name') ?? ''),
+        deliveryAddress: String(formData.get('deliveryAddress') ?? ''),
+        cardNumber: String(formData.get('cardNumber') ?? ''),
+        cardExpiry: String(formData.get('cardExpiry') ?? ''),
+        cardCvc: String(formData.get('cardCvc') ?? ''),
+      }),
+    });
     setResult((await response.json()) as OrderResult);
     setIsSubmitting(false);
   }
