@@ -17,6 +17,13 @@ const currentPath = Astro.url.pathname;
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <script is:inline>
+      window.ddjskey = 'BC3B6ECB25B6121067F077AB2D431F';
+      window.ddoptions = {
+        // Add your configuration here
+      };
+    </script>
+    <script src="https://js.datadome.co/tags.js" async></script>
   </head>
   <body class="flex min-h-screen flex-col">
     <PageShell
