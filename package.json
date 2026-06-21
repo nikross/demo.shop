@@ -1,21 +1,23 @@
 {
   "name": "mock-shop",
   "private": true,
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "start": "node ./dist/server/entry.mjs",
+    "start": "astro preview",
     "preview": "astro preview",
     "fetch-data": "node scripts/fetch-shop-data.mjs",
     "lint": "eslint --no-error-on-unmatched-pattern .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@astrojs/node": "^9.2.1",
     "@astrojs/react": "^4.2.1",
+    "@astrojs/vercel": "^9.0.5",
     "astro": "^5.7.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

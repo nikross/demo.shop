@@ -23,7 +23,7 @@ Open [http://localhost:4321](http://localhost:4321) (Astro dev default).
 |---------|-------------|
 | `npm run dev` | Start Astro dev server |
 | `npm run build` | Build for production |
-| `npm start` | Run production server (after build) |
+| `npm start` | Preview production build locally (alias for `astro preview`) |
 | `npm run preview` | Preview production build locally |
 | `npm run fetch-data` | Re-fetch catalog data from mock.shop |
 
@@ -36,34 +36,13 @@ Auth, signup, and checkout endpoints accept form data and return success respons
 
 ## Deployment
 
-### Dokploy (recommended: Docker)
+The app uses `@astrojs/vercel` for SSR. Connect the repo in Vercel — no extra config needed; Vercel detects Astro and runs `astro build`.
 
-Use **Dockerfile** as the build type. Railpack does not ship binaries for `arm64-unknown-linux-musl`, which Dokploy's build host requires.
-
-```bash
-docker build -t mock-shop .
-docker run -p 3000:3000 mock-shop
-```
-
-In Dokploy: set build type to **Dockerfile**, container port **3000**.
-
-### Railway / other Railpack hosts
-
-`railpack.json` is included for platforms with Railpack support. It uses `npm install` (not `npm ci`) so Linux builds resolve platform-specific optional dependencies correctly.
-
-### Environment
-
-| Variable | Value |
-|----------|-------|
-| `HOST` | `0.0.0.0` |
-| `PORT` | whatever your platform assigns (e.g. `3000`) |
-| `NODE_ENV` | `production` |
-
-Local production test:
+Local production preview after build:
 
 ```bash
 npm run build
-HOST=0.0.0.0 PORT=3000 npm start
+npm run preview
 ```
 
 ## Data
