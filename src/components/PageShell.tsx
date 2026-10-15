@@ -2,6 +2,7 @@ import type {Cart, Menu} from '~/lib/types';
 import {Aside} from '~/components/Aside';
 import {Header, HeaderMenu} from '~/components/Header';
 import {CartMain} from '~/components/CartMain';
+import {useLiveCart} from '~/components/CartForm';
 import {SearchAside} from '~/components/SearchAside';
 
 export function PageShell({
@@ -19,10 +20,12 @@ export function PageShell({
   currentPath: string;
   children: React.ReactNode;
 }) {
+  const liveCart = useLiveCart(cart);
+
   return (
     <Aside.Provider>
       <Aside type="cart" heading="CART">
-        <CartMain cart={cart} layout="aside" />
+        <CartMain cart={liveCart} layout="aside" />
       </Aside>
       <Aside type="search" heading="SEARCH">
         <SearchAside />
@@ -33,7 +36,7 @@ export function PageShell({
 
       <Header
         menu={headerMenu}
-        cart={cart}
+        cart={liveCart}
         isLoggedIn={isLoggedIn}
         currentPath={currentPath}
       />

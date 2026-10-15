@@ -1,8 +1,10 @@
-import {useState, type FormEvent, type ReactNode} from 'react';
+import {useEffect, useState, type FormEvent, type ReactNode} from 'react';
 import {CART_ACTIONS} from '~/lib/cart-actions';
 import type {Cart} from '~/lib/types';
 
 type CartAction = (typeof CART_ACTIONS)[keyof typeof CART_ACTIONS];
+
+const CART_UPDATED_EVENT = 'mock-shop:cart-updated';
 
 async function postCart(action: CartAction, inputs: Record<string, unknown>) {
   const res = await fetch('/api/cart', {
@@ -12,6 +14,30 @@ async function postCart(action: CartAction, inputs: Record<string, unknown>) {
   });
   if (!res.ok) throw new Error('Cart update failed');
   return (await res.json()) as {cart: Cart};
+}
+
+function dispatchCartUpdated(cart: Cart) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT, {detail: cart}));
+  }
+}
+
+export function useLiveCart(initialCart: Cart | null) {
+  const [cart, setCart] = useState(initialCart);
+
+  useEffect(() => {
+    setCart(initialCart);
+  }, [initialCart]);
+
+  useEffect(() => {
+    const onUpdate = (event: Event) => {
+      setCart((event as CustomEvent<Cart>).detail);
+    };
+    window.addEventListener(CART_UPDATED_EVENT, onUpdate);
+    return () => window.removeEventListener(CART_UPDATED_EVENT, onUpdate);
+  }, []);
+
+  return cart;
 }
 
 export function CartForm({
@@ -31,9 +57,9 @@ export function CartForm({
     e.preventDefault();
     setPending(true);
     try {
-      await postCart(action, inputs);
+      const {cart} = await postCart(action, inputs);
+      dispatchCartUpdated(cart);
       onSuccess?.();
-      window.location.reload();
     } finally {
       setPending(false);
     }

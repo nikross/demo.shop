@@ -2,6 +2,7 @@ import type {Cart} from '~/lib/types';
 import {CartLineItem} from '~/components/CartLineItem';
 import {CartSummary} from '~/components/CartSummary';
 import {useAside} from '~/components/Aside';
+import {useLiveCart} from '~/components/CartForm';
 
 export function CartMain({
   cart,
@@ -11,8 +12,9 @@ export function CartMain({
   layout: 'page' | 'aside';
 }) {
   const {close} = useAside();
-  const linesCount = Boolean(cart?.lines?.nodes?.length);
-  const cartHasItems = Boolean(cart?.totalQuantity);
+  const liveCart = useLiveCart(cart);
+  const linesCount = Boolean(liveCart?.lines?.nodes?.length);
+  const cartHasItems = Boolean(liveCart?.totalQuantity);
 
   return (
     <section
@@ -35,11 +37,11 @@ export function CartMain({
       )}
       <div className="flex flex-col gap-6">
         <ul className="divide-y divide-neutral-200">
-          {(cart?.lines?.nodes ?? []).map((line) => (
+          {(liveCart?.lines?.nodes ?? []).map((line) => (
             <CartLineItem key={line.id} line={line} layout={layout} />
           ))}
         </ul>
-        {cartHasItems && <CartSummary cart={cart} layout={layout} />}
+        {cartHasItems && <CartSummary cart={liveCart} layout={layout} />}
       </div>
     </section>
   );
