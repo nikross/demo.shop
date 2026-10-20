@@ -1,4 +1,4 @@
-import {useId, useRef, useState} from 'react';
+import {useEffect, useId, useRef, useState} from 'react';
 import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
 import {useAside} from '~/components/Aside';
 import type {ProductSummary, Collection, Page, Article} from '~/lib/types';
@@ -18,10 +18,15 @@ type PredictiveResult = {
 export function SearchAside() {
   const queriesDatalistId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
-  const {close} = useAside();
+  const {type, close} = useAside();
   const [term, setTerm] = useState('');
   const [result, setResult] = useState<PredictiveResult | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Focus the search field whenever the search drawer opens.
+  useEffect(() => {
+    if (type === 'search') inputRef.current?.focus();
+  }, [type]);
 
   async function fetchResults(value: string) {
     setTerm(value);

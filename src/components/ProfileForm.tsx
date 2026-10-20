@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react';
 import type {AuthResult} from '~/lib/auth';
-import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
+import {inputClassName, noAutofillProps, primaryButtonClassName} from '~/lib/form-classes';
 import {loadProfile, saveProfile, signOut, useSignedInEmail, type Profile} from '~/lib/session';
 
 const FIELDS: {name: keyof Profile; label: string; type?: string; autoComplete: string}[] = [
-  {name: 'email', label: 'Email', type: 'email', autoComplete: 'email'},
+  {name: 'email', label: 'Email', type: 'email', autoComplete: 'off'},
   {name: 'firstName', label: 'First name', autoComplete: 'given-name'},
   {name: 'lastName', label: 'Last name', autoComplete: 'family-name'},
   {name: 'phone', label: 'Phone', type: 'tel', autoComplete: 'tel'},
@@ -68,7 +68,7 @@ export function ProfileForm({welcome}: {welcome: string | null}) {
         </div>
       ) : null}
       <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Profile</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex max-w-none flex-col gap-4" onSubmit={handleSubmit}>
         {FIELDS.map((field) => (
           <div key={field.name} className="flex flex-col gap-1.5">
             <label htmlFor={`profile-${field.name}`} className="text-sm font-medium text-neutral-700">
@@ -78,6 +78,7 @@ export function ProfileForm({welcome}: {welcome: string | null}) {
               id={`profile-${field.name}`}
               name={field.name}
               type={field.type ?? 'text'}
+              {...(field.type === 'email' ? noAutofillProps : {})}
               autoComplete={field.autoComplete}
               required={field.name === 'email'}
               value={profile[field.name]}

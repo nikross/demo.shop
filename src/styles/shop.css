@@ -149,6 +149,21 @@ aside li {
   transform: translateX(calc(var(--aside-width) * -1));
 }
 
+/* left-hand aside (mobile menu) */
+.overlay-left aside {
+  left: calc(-1 * var(--aside-width));
+  right: auto;
+}
+
+.overlay-left .close-outside {
+  left: auto;
+  right: 0;
+}
+
+.overlay-left.expanded aside {
+  transform: translateX(var(--aside-width));
+}
+
 button.reset {
   border: 0;
   background: inherit;
@@ -176,6 +191,7 @@ button.reset:hover:not(:has(> *)) {
 .header {
   align-items: center;
   background: #fff;
+  border-bottom: 1px solid #eee;
   display: flex;
   height: var(--header-height);
   padding: 0 1rem;
@@ -185,7 +201,9 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .header-menu-mobile-toggle {
-  @media (min-width: 48em) {
+  margin-right: 0.75rem;
+  /* Same breakpoint as .header-menu-desktop */
+  @media (min-width: 45em) {
     display: none;
   }
 }

@@ -6,6 +6,8 @@
 @theme {
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
+  /* Brand wordmark ("DD Shop"), loaded from Google Fonts in Layout.astro */
+  --font-brand: 'Carter One', system-ui, sans-serif;
 }
 
 @import './reset.css' layer(base);

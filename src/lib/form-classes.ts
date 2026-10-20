@@ -14,3 +14,13 @@ export const subtleButtonClassName =
 
 export const checkoutButtonClassName =
   'inline-flex h-10 w-full cursor-pointer items-center justify-center rounded-md bg-neutral-900 px-4 text-sm font-medium text-white no-underline transition hover:bg-neutral-800 hover:no-underline';
+
+/**
+ * Keeps browsers and password managers (1Password, Dashlane) from filling
+ * email/password fields, so the demo's own pre-filled values stay visible.
+ */
+export const noAutofillProps = {
+  autoComplete: 'off',
+  'data-1p-ignore': true,
+  'data-dashlane-disabled-on-field': 'true',
+} as const;

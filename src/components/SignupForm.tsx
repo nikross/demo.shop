@@ -1,12 +1,16 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import type {AuthResult} from '~/lib/auth';
-import {MIN_PASSWORD_LENGTH} from '~/lib/credentials';
-import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
+import {MIN_PASSWORD_LENGTH, randomSignupEmail} from '~/lib/credentials';
+import {inputClassName, noAutofillProps, primaryButtonClassName} from '~/lib/form-classes';
 import {signIn} from '~/lib/session';
 
 export function SignupForm() {
   const [result, setResult] = useState<AuthResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState('');
+
+  // Pre-fill a random new address so the demo signup is one password away.
+  useEffect(() => setEmail(randomSignupEmail()), []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,10 +42,10 @@ export function SignupForm() {
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-8">
       <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Sign up</h1>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex max-w-none flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="signup-email" className="text-sm font-medium text-neutral-700">Email</label>
-          <input id="signup-email" name="email" type="email" required className={inputClassName} />
+          <input id="signup-email" name="email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} className={inputClassName} {...noAutofillProps} />
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="signup-password" className="text-sm font-medium text-neutral-700">Password</label>
@@ -51,6 +55,7 @@ export function SignupForm() {
             type="password"
             required
             minLength={MIN_PASSWORD_LENGTH}
+            {...noAutofillProps}
             aria-describedby="signup-password-hint"
             className={inputClassName}
           />

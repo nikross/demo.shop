@@ -350,3 +350,21 @@ function pick<T>(items: T[]): T {
 export function randomLeakedCredentials() {
   return {email: pick(DEMO_USERS).email, password: pick(LEAKED_PASSWORDS)};
 }
+
+/** Lowercase ASCII letters only, e.g. "Nováková" → "novakova". */
+function slug(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z]/g, '');
+}
+
+/** A plausible new address (e.g. "emma.weber42@gmx.de") for the signup form. */
+export function randomSignupEmail() {
+  const first = slug(pick(DEMO_USERS).firstName);
+  const last = slug(pick(DEMO_USERS).lastName);
+  const domain = pick(DEMO_USERS).email.split('@')[1];
+  const number = 10 + Math.floor(Math.random() * 90);
+  return `${first}.${last}${number}@${domain}`;
+}

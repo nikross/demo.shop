@@ -1,3 +1,4 @@
+import {Menu as MenuIcon, Search, ShoppingCart} from 'lucide-react';
 import type {Cart, Menu} from '~/lib/types';
 import {useAside} from '~/components/Aside';
 import {useSignedInEmail} from '~/lib/session';
@@ -21,12 +22,10 @@ export function Header({
 
   return (
     <header className="header">
-      <a href="/" className={headerNavLinkClassName}>
-        <strong>Mock Shop</strong>
-      </a>
+      <HeaderMenuMobileToggle />
+      <ShopBrand />
       <HeaderMenu menu={menu} viewport="desktop" currentPath={currentPath} />
       <nav className="header-ctas" role="navigation">
-        <HeaderMenuMobileToggle />
         {signedInEmail ? (
           <a href="/profile" title={signedInEmail} className={headerNavLinkClassName}>Profile</a>
         ) : (
@@ -36,6 +35,15 @@ export function Header({
         <CartBadge count={cart?.totalQuantity ?? 0} />
       </nav>
     </header>
+  );
+}
+
+/** The "DD Shop" home link, shared by the top nav and the menu drawer. */
+export function ShopBrand() {
+  return (
+    <a href="/" className={headerNavLinkClassName}>
+      <strong className="font-brand text-[1.25rem] font-normal">DD Shop</strong>
+    </a>
   );
 }
 
@@ -82,8 +90,13 @@ export function HeaderMenu({
 function HeaderMenuMobileToggle() {
   const {open} = useAside();
   return (
-    <button className="header-menu-mobile-toggle reset" onClick={() => open('mobile')}>
-      <h3>☰</h3>
+    <button
+      type="button"
+      aria-label="Open menu"
+      className="header-menu-mobile-toggle reset cursor-pointer text-black"
+      onClick={() => open('mobile')}
+    >
+      <MenuIcon aria-hidden="true" className="size-[1.5rem]" />
     </button>
   );
 }
@@ -91,8 +104,8 @@ function HeaderMenuMobileToggle() {
 function SearchToggle() {
   const {open} = useAside();
   return (
-    <button type="button" className={headerNavButtonClassName} onClick={() => open('search')}>
-      Search
+    <button type="button" aria-label="Search" className={headerNavButtonClassName} onClick={() => open('search')}>
+      <Search aria-hidden="true" className="size-5" />
     </button>
   );
 }
@@ -105,7 +118,8 @@ function CartBadge({count}: {count: number}) {
       className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
       onClick={() => open('cart')}
     >
-      Cart ({count})
+      <ShoppingCart aria-hidden="true" className="size-4" />
+      {count === 0 ? 'Cart' : `${count} ${count === 1 ? 'item' : 'items'}`}
     </button>
   );
 }

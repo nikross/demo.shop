@@ -1,8 +1,9 @@
-export const MOCK_CHECKOUT = {
-  email: 'jon@gmail.com',
-  name: 'Jon Smith',
-  deliveryAddress: '123 Demo Street\n10115 Berlin, Germany',
+/** Demo payment details pre-filled at checkout (Stripe's test card). */
+export const MOCK_PAYMENT = {
   cardNumber: '4242 4242 4242 4242',
-  cardExpiry: '12/28',
+  /** Always valid: December, three years from now. */
+  get cardExpiry() {
+    return `12/${String((new Date().getFullYear() + 3) % 100).padStart(2, '0')}`;
+  },
   cardCvc: '123',
-} as const;
+};

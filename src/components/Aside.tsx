@@ -43,10 +43,19 @@ export function Aside({
   children,
   heading,
   type,
+  side = 'right',
+  hideHeader = false,
+  hideCloseButton = false,
 }: {
   children?: React.ReactNode;
   type: AsideType;
   heading: React.ReactNode;
+  /** The edge the panel slides in from. */
+  side?: 'left' | 'right';
+  /** Drop the heading and close button (Escape and outside clicks still close). */
+  hideHeader?: boolean;
+  /** Keep the heading but drop the × button. */
+  hideCloseButton?: boolean;
 }) {
   const {type: activeType, close} = useAside();
   const expanded = type === activeType;
@@ -71,18 +80,23 @@ export function Aside({
   return (
     <div
       aria-modal
-      className={`overlay ${expanded ? 'expanded' : ''}`}
+      className={`overlay ${side === 'left' ? 'overlay-left' : ''} ${expanded ? 'expanded' : ''}`}
       role="dialog"
-      aria-labelledby={id}
+      aria-labelledby={hideHeader ? undefined : id}
+      aria-label={hideHeader && typeof heading === 'string' ? heading : undefined}
     >
       <button className="close-outside" onClick={close} />
       <aside>
-        <header>
-          <h3 id={id}>{heading}</h3>
-          <button className="close reset" onClick={close} aria-label="Close">
-            &times;
-          </button>
-        </header>
+        {hideHeader ? null : (
+          <header>
+            <h3 id={id}>{heading}</h3>
+            {hideCloseButton ? null : (
+              <button className="close reset" onClick={close} aria-label="Close">
+                &times;
+              </button>
+            )}
+          </header>
+        )}
         <main>{children}</main>
       </aside>
     </div>

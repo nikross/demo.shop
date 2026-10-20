@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import type {AuthResult} from '~/lib/auth';
 import {MIN_PASSWORD_LENGTH, randomLeakedCredentials} from '~/lib/credentials';
-import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
+import {inputClassName, noAutofillProps, primaryButtonClassName} from '~/lib/form-classes';
 import {signIn} from '~/lib/session';
 
 export function LoginForm() {
@@ -44,7 +44,9 @@ export function LoginForm() {
         <details className="group rounded-md border border-yellow-300 bg-yellow-50 text-xs text-yellow-900">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 font-semibold [&::-webkit-details-marker]:hidden">
             Credential stuffing demo: how this works
-            <span aria-hidden="true" className="transition group-open:rotate-180">▾</span>
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className="size-4 shrink-0 transition group-open:rotate-180">
+              <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+            </svg>
           </summary>
           <div className="flex flex-col gap-2 border-t border-yellow-200 px-3 py-2">
             <p className="text-xs">
@@ -59,14 +61,14 @@ export function LoginForm() {
           </div>
         </details>
       </div>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <form className="flex max-w-none flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="login-email" className="text-sm font-medium text-neutral-700">Email</label>
-          <input id="login-email" name="email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} className={inputClassName} />
+          <input id="login-email" name="email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} className={inputClassName} {...noAutofillProps} />
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="login-password" className="text-sm font-medium text-neutral-700">Password</label>
-          <input id="login-password" name="password" type="password" required value={password} onChange={(event) => setPassword(event.target.value)} className={inputClassName} />
+          <input id="login-password" name="password" type="password" required value={password} onChange={(event) => setPassword(event.target.value)} className={inputClassName} {...noAutofillProps} />
         </div>
         <button type="submit" disabled={isSubmitting} className={`${primaryButtonClassName} w-full`}>
           {isSubmitting ? 'Signing in…' : 'Sign in'}

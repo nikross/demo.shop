@@ -3,8 +3,8 @@ import {ProcessedOrder} from '~/components/ProcessedOrder';
 import {dispatchCartUpdated} from '~/components/CartForm';
 import type {Cart} from '~/lib/types';
 import type {OrderResult} from '~/lib/order';
-import {MOCK_CHECKOUT} from '~/lib/mock-data';
-import {inputClassName, primaryButtonClassName, textareaClassName} from '~/lib/form-classes';
+import {MOCK_PAYMENT} from '~/lib/mock-data';
+import {inputClassName, noAutofillProps, primaryButtonClassName, textareaClassName} from '~/lib/form-classes';
 import {EurMoney} from '~/components/EurMoney';
 import {loadProfile, useSignedInEmail} from '~/lib/session';
 
@@ -59,7 +59,7 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
           ) : (
             <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
               {lines.map((line) => (
-                <li key={line.id} className="flex gap-4 p-4">
+                <li key={line.id} className="mb-0 flex items-center gap-4 p-4">
                   {line.merchandise.image && (
                     <img src={line.merchandise.image.url} alt="" className="size-16 rounded-md object-cover" />
                   )}
@@ -82,13 +82,13 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
           ) : null}
           {/* Keyed so the default values refresh once the session profile is read. */}
           <form key={JSON.stringify(contact)} className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <input name="email" type="email" required defaultValue={contact.email} className={inputClassName} placeholder="Email" />
+            <input name="email" type="email" required defaultValue={contact.email} className={inputClassName} placeholder="Email" {...noAutofillProps} />
             <input name="name" type="text" required defaultValue={contact.name} className={inputClassName} placeholder="Name" />
             <textarea name="deliveryAddress" required rows={3} defaultValue={contact.deliveryAddress} className={textareaClassName} placeholder="Address" />
-            <input name="cardNumber" required defaultValue={MOCK_CHECKOUT.cardNumber} className={inputClassName} placeholder="Card number" />
+            <input name="cardNumber" required defaultValue={MOCK_PAYMENT.cardNumber} className={inputClassName} placeholder="Card number" />
             <div className="grid grid-cols-2 gap-4">
-              <input name="cardExpiry" required defaultValue={MOCK_CHECKOUT.cardExpiry} className={inputClassName} placeholder="Expiry" />
-              <input name="cardCvc" required defaultValue={MOCK_CHECKOUT.cardCvc} className={inputClassName} placeholder="CVC" />
+              <input name="cardExpiry" required defaultValue={MOCK_PAYMENT.cardExpiry} className={inputClassName} placeholder="Expiry" />
+              <input name="cardCvc" required defaultValue={MOCK_PAYMENT.cardCvc} className={inputClassName} placeholder="CVC" />
             </div>
             <button type="submit" disabled={isSubmitting || !lines.length} className={`${primaryButtonClassName} w-full`}>
               {isSubmitting ? 'Processing…' : 'Pay now'}
@@ -100,10 +100,10 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
   );
 }
 
-/** Contact details from the signed-in user's profile, or the mock defaults. */
+/** Contact details from the signed-in user's profile; empty for guests. */
 function useCheckoutContact() {
   const signedInEmail = useSignedInEmail();
-  if (!signedInEmail) return MOCK_CHECKOUT;
+  if (!signedInEmail) return {email: '', name: '', deliveryAddress: ''};
   const profile = loadProfile(signedInEmail);
   return {
     email: profile.email,
