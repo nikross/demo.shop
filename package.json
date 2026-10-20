@@ -18,6 +18,8 @@
   "dependencies": {
     "@astrojs/react": "^4.2.1",
     "@astrojs/vercel": "^9.0.5",
+    "@datadome/fraud-sdk-node": "^2.2.0",
+    "@vercel/functions": "^3.10.1",
     "astro": "^5.7.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -29,6 +31,7 @@
     "@eslint/js": "^9.18.0",
     "@tailwindcss/vite": "^4.1.6",
     "@total-typescript/ts-reset": "^0.6.1",
+    "@types/node": "^22.20.5",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "@typescript-eslint/eslint-plugin": "^8.21.0",

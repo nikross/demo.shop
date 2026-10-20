@@ -21,7 +21,9 @@ export function LoginForm() {
         password: String(formData.get('password') ?? ''),
       }),
     });
-    setResult((await response.json()) as AuthResult);
+    const result = (await response.json()) as AuthResult;
+    if (result.dataDome) console.log('[DataDome]', result.dataDome);
+    setResult(result);
     setIsSubmitting(false);
   }
 
