@@ -19,7 +19,6 @@
     "@astrojs/react": "^4.2.1",
     "@astrojs/vercel": "^9.0.5",
     "@datadome/fraud-sdk-node": "^2.2.0",
-    "@vercel/functions": "^3.10.1",
     "astro": "^5.7.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

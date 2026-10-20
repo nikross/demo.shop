@@ -15,20 +15,16 @@ export default defineConfig({
     plugins: [
       tailwindcss(),
       {
-        // Bundle these into the production server build: on Vercel, the pnpm
-        // symlink that lets the DataDome SDK require('tslib') is missing at
-        // runtime. Build only, since the dev server can't run the SDK's
-        // CommonJS code when it's inlined.
-        name: 'bundle-server-sdks',
+        // Bundle the DataDome SDK (its ESM build) into the production server
+        // build, so it doesn't rely on pnpm's node_modules symlinks surviving
+        // deployment packaging; its CommonJS build requires 'tslib' through
+        // one. Build only: the dev server can't run the inlined CommonJS build.
+        name: 'bundle-datadome-sdk',
         config: (_, {command}) =>
           command === 'build'
             ? {
                 ssr: {
-                  noExternal: [
-                    '@datadome/fraud-sdk-node',
-                    '@vercel/functions',
-                    'tslib',
-                  ],
+                  noExternal: ['@datadome/fraud-sdk-node', 'tslib'],
                 },
               }
             : undefined,

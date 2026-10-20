@@ -8,9 +8,16 @@ export const POST: APIRoute = withJsonErrors(async (context) => {
   const {email, password} = await parseAuthFormData(request);
   const auth = authenticateLogin(email, password);
   const dataDome = await validateLogin(request, clientAddress, email, auth.ok);
-  const result = dataDome.ok
-    ? {...auth, dataDome: dataDome.dataDome}
-    : dataDome;
+  // A failed login gets no DataDome decision, only a note that it was collected.
+  const result = !dataDome.ok
+    ? dataDome
+    : auth.ok
+      ? {...auth, dataDome: dataDome.dataDome}
+      : {
+          ...auth,
+          error: `${auth.error}. ${dataDome.message}`,
+          dataDome: dataDome.dataDome,
+        };
   return new Response(JSON.stringify(result), {
     status: result.ok ? 200 : 401,
     headers: {'Content-Type': 'application/json'},

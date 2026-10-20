@@ -14,7 +14,6 @@ import {
   ResponseStatus,
   type DataDomeEvent,
 } from '@datadome/fraud-sdk-node';
-import {waitUntil} from '@vercel/functions';
 import {
   EMAIL_PATTERN,
   MIN_PASSWORD_LENGTH,
@@ -103,8 +102,9 @@ const SKIPPED: DataDomeInfo = {
 /**
  * Sends the event to `validate` and logs the decision server-side. Anything
  * but `allow` becomes an obvious block notice for the demo UI, e.g.
- * "Login blocked by DataDome for security reasons. [deny]". Timeouts and API
- * errors come back from the SDK as `allow`, flagged by `status`.
+ * "Login blocked by DataDome Account Protect (action: deny, reasons: …)".
+ * Timeouts and API errors come back from the SDK as `allow`, flagged by
+ * `status`.
  */
 async function validateWithDataDome(
   client: DataDome,
@@ -132,9 +132,13 @@ async function validateWithDataDome(
 
   if (response.action !== ResponseAction.ALLOW) {
     console.warn(`${summary} → BLOCKED`, dataDome);
+    const details = [
+      `action: ${response.action}`,
+      response.reasons?.length && `reasons: ${response.reasons.join(', ')}`,
+    ].filter(Boolean);
     return {
       ok: false,
-      error: `${label} blocked by DataDome for security reasons. [${response.action}]`,
+      error: `${label} blocked by DataDome Account Protect (${details.join(', ')}).`,
       dataDome,
     };
   }
@@ -146,11 +150,16 @@ async function validateWithDataDome(
   return {ok: true, message: `${label} allowed by DataDome.`, dataDome};
 }
 
+/** The SDK only times out `validate`; cap `collect` the same way. */
+const COLLECT_TIMEOUT_MS = 1500;
+
 /**
  * Validates a login attempt against DataDome Account Protect.
  * Successful logins are sent to `validate` and must be blocked unless the
  * recommended action is `allow`. Failed logins are only reported to
- * `collect`, in the background, so the response doesn't wait on it.
+ * `collect`; the response waits for it (capped at COLLECT_TIMEOUT_MS) so it
+ * isn't cut off on serverless platforms, and its `message` says what
+ * DataDome did with the attempt.
  * https://docs.datadome.co/docs/account-protect-login
  */
 export async function validateLogin(
@@ -160,35 +169,59 @@ export async function validateLogin(
   succeeded: boolean,
 ): Promise<AuthResult> {
   const client = getDataDomeClient();
-  if (!client) return {ok: true, message: 'Login allowed.', dataDome: SKIPPED};
+  if (!client) {
+    return {
+      ok: true,
+      message: 'DataDome Account Protect is not configured.',
+      dataDome: SKIPPED,
+    };
+  }
 
   if (!succeeded) {
     const start = performance.now();
-    waitUntil(
-      client
-        .collect(
-          toIncomingMessage(request),
-          new LoginEvent({
-            account: email,
-            status: 'failed',
-            failReason: 'wrongPassword',
-          }),
-          {addr: clientAddress},
-        )
-        .then((response) => {
-          const durationMs = Math.round(performance.now() - start);
-          const log =
-            response.status === ResponseStatus.OK ? console.info : console.warn;
-          log(
-            `[DataDome] Login collect for ${email}: status=${response.status} (${durationMs} ms)`,
-            response,
-          );
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<{status: string; message: string}>(
+      (resolve) => {
+        timer = setTimeout(
+          () =>
+            resolve({
+              status: ResponseStatus.TIMEOUT,
+              message: `Request timed out after ${COLLECT_TIMEOUT_MS} milliseconds`,
+            }),
+          COLLECT_TIMEOUT_MS,
+        );
+      },
+    );
+    const response = await Promise.race([
+      client.collect(
+        toIncomingMessage(request),
+        new LoginEvent({
+          account: email,
+          status: 'failed',
+          failReason: 'wrongPassword',
         }),
+        {addr: clientAddress},
+      ),
+      timeout,
+    ]).finally(() => clearTimeout(timer));
+
+    const dataDome: DataDomeInfo = {
+      operation: 'collect',
+      status: response.status,
+      message: 'message' in response ? response.message : undefined,
+      durationMs: Math.round(performance.now() - start),
+    };
+    const recorded = response.status === ResponseStatus.OK;
+    (recorded ? console.info : console.warn)(
+      `[DataDome] Login collect for ${email}: status=${dataDome.status} (${dataDome.durationMs} ms)`,
+      dataDome,
     );
     return {
       ok: true,
-      message: 'Failed login reported to DataDome.',
-      dataDome: {operation: 'collect', status: 'sent in background'},
+      message: recorded
+        ? 'Failed attempt recorded by DataDome Account Protect.'
+        : `DataDome Account Protect could not record the failed attempt (${response.status}).`,
+      dataDome,
     };
   }
 

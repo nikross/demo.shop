@@ -17,9 +17,6 @@ importers:
       '@datadome/fraud-sdk-node':
         specifier: ^2.2.0
         version: 2.2.0
-      '@vercel/functions':
-        specifier: ^3.10.1
-        version: 3.10.1
       astro:
         specifier: ^5.7.10
         version: 5.18.2(@types/node@22.20.5)(@vercel/functions@3.10.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.61.1)(typescript@5.9.3)
@@ -4794,10 +4791,12 @@ snapshots:
     dependencies:
       xdg-app-paths: 5.5.1
       zod: 4.1.11
+    optional: true
 
   '@vercel/cli-exec@1.0.1':
     dependencies:
       execa: 5.1.1
+    optional: true
 
   '@vercel/functions@2.2.13':
     dependencies:
@@ -4806,6 +4805,7 @@ snapshots:
   '@vercel/functions@3.10.1':
     dependencies:
       '@vercel/oidc': 4.0.1
+    optional: true
 
   '@vercel/nft@0.30.4(rollup@4.61.1)':
     dependencies:
@@ -4836,6 +4836,7 @@ snapshots:
       '@vercel/cli-config': 0.3.1
       '@vercel/cli-exec': 1.0.1
       jose: 5.10.0
+    optional: true
 
   '@vercel/routing-utils@5.3.3':
     dependencies:
@@ -5736,6 +5737,7 @@ snapshots:
       onetime: 5.1.2
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
+    optional: true
 
   extend@3.0.2: {}
 
@@ -5826,7 +5828,8 @@ snapshots:
       dunder-proto: 1.0.1
       es-object-atoms: 1.1.2
 
-  get-stream@6.0.1: {}
+  get-stream@6.0.1:
+    optional: true
 
   get-symbol-description@1.1.0:
     dependencies:
@@ -6000,7 +6003,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  human-signals@2.1.0: {}
+  human-signals@2.1.0:
+    optional: true
 
   ignore@5.3.2: {}
 
@@ -6117,7 +6121,8 @@ snapshots:
     dependencies:
       call-bound: 1.0.4
 
-  is-stream@2.0.1: {}
+  is-stream@2.0.1:
+    optional: true
 
   is-string@1.1.1:
     dependencies:
@@ -6170,7 +6175,8 @@ snapshots:
 
   jiti@2.7.0: {}
 
-  jose@5.10.0: {}
+  jose@5.10.0:
+    optional: true
 
   js-tokens@4.0.0: {}
 
@@ -6423,7 +6429,8 @@ snapshots:
 
   mdn-data@2.27.1: {}
 
-  merge-stream@2.0.0: {}
+  merge-stream@2.0.0:
+    optional: true
 
   micromark-core-commonmark@2.0.3:
     dependencies:
@@ -6616,7 +6623,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mimic-fn@2.1.0: {}
+  mimic-fn@2.1.0:
+    optional: true
 
   minimatch@10.2.5:
     dependencies:
@@ -6682,6 +6690,7 @@ snapshots:
   npm-run-path@4.0.1:
     dependencies:
       path-key: 3.1.1
+    optional: true
 
   nth-check@2.1.1:
     dependencies:
@@ -6740,6 +6749,7 @@ snapshots:
   onetime@5.1.2:
     dependencies:
       mimic-fn: 2.1.0
+    optional: true
 
   oniguruma-parser@0.12.2: {}
 
@@ -6758,7 +6768,8 @@ snapshots:
       type-check: 0.4.0
       word-wrap: 1.2.5
 
-  os-paths@4.4.0: {}
+  os-paths@4.4.0:
+    optional: true
 
   own-keys@1.0.1:
     dependencies:
@@ -7192,7 +7203,8 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  signal-exit@3.0.7: {}
+  signal-exit@3.0.7:
+    optional: true
 
   signal-exit@4.1.0: {}
 
@@ -7295,7 +7307,8 @@ snapshots:
 
   strip-bom@3.0.0: {}
 
-  strip-final-newline@2.0.0: {}
+  strip-final-newline@2.0.0:
+    optional: true
 
   strip-json-comments@3.1.1: {}
 
@@ -7653,10 +7666,12 @@ snapshots:
     dependencies:
       os-paths: 4.4.0
       xdg-portable: 7.3.0
+    optional: true
 
   xdg-portable@7.3.0:
     dependencies:
       os-paths: 4.4.0
+    optional: true
 
   xxhash-wasm@1.1.0: {}
 
@@ -7687,6 +7702,7 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.1.11: {}
+  zod@4.1.11:
+    optional: true
 
   zwitch@2.0.4: {}
