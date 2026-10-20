@@ -1,4 +1,5 @@
 import type {APIRoute} from 'astro';
+import {getClientIp, withJsonErrors} from '~/lib/request';
 import {validateProfileUpdate} from '~/lib/auth';
 import type {Profile} from '~/lib/credentials';
 
@@ -13,7 +14,9 @@ const PROFILE_FIELDS = [
   'country',
 ] as const satisfies ReadonlyArray<keyof Profile>;
 
-export const POST: APIRoute = async ({request, clientAddress}) => {
+export const POST: APIRoute = withJsonErrors(async (context) => {
+  const {request} = context;
+  const clientAddress = getClientIp(context);
   const body = (await request.json()) as {
     accountEmail?: string;
     profile?: Partial<Profile>;
@@ -37,4 +40,4 @@ export const POST: APIRoute = async ({request, clientAddress}) => {
     status: result.ok ? 200 : result.dataDome ? 403 : 400,
     headers: {'Content-Type': 'application/json'},
   });
-};
+});
