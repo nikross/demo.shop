@@ -71,4 +71,4 @@ export function CartForm({
 }
 
 CartForm.ACTIONS = CART_ACTIONS;
-export {postCart};
+export {postCart, dispatchCartUpdated};

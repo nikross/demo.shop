@@ -1,10 +1,10 @@
 type ProcessedOrderProps = {
-  orderId?: string;
+  orderId: string;
   subtitle?: string;
 };
 
 export function ProcessedOrder({
-  orderId = `ORD-${Date.now().toString(36).toUpperCase()}`,
+  orderId,
   subtitle = 'Your request has been received and is being processed.',
 }: ProcessedOrderProps) {
   const processedAt = new Date().toLocaleString();

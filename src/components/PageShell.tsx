@@ -9,14 +9,12 @@ export function PageShell({
   headerMenu,
   footerMenu,
   cart,
-  isLoggedIn,
   currentPath,
   children,
 }: {
   headerMenu: Menu;
   footerMenu: Menu;
   cart: Cart | null;
-  isLoggedIn: boolean;
   currentPath: string;
   children: React.ReactNode;
 }) {
@@ -37,7 +35,6 @@ export function PageShell({
       <Header
         menu={headerMenu}
         cart={liveCart}
-        isLoggedIn={isLoggedIn}
         currentPath={currentPath}
       />
 

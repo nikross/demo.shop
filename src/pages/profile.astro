@@ -1,0 +1,8 @@
+---
+import Layout from '~/layouts/Layout.astro';
+import {ProfileForm} from '~/components/ProfileForm';
+---
+
+<Layout title="Shop | Profile">
+  <ProfileForm client:load welcome={Astro.url.searchParams.get('welcome')} />
+</Layout>

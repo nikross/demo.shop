@@ -1,6 +1,7 @@
 /**
  * Mock auth for demo login/signup flows.
- * Does not persist users or issue real sessions beyond a simple cookie.
+ * Does not persist users; the signed-in state lives in sessionStorage
+ * (see ~/lib/session).
  */
 
 import type {IncomingMessage} from 'node:http';
@@ -13,9 +14,7 @@ import {
   type DataDomeEvent,
 } from '@datadome/fraud-sdk-node';
 import {waitUntil} from '@vercel/functions';
-
-export const MOCK_EMAIL = 'jon@gmail.com';
-export const MOCK_PASSWORD = '12345';
+import {EMAIL_PATTERN, MIN_PASSWORD_LENGTH} from '~/lib/credentials';
 
 /** DataDome decision details, returned to the browser for demo debugging. */
 export type DataDomeInfo = {
@@ -52,8 +51,9 @@ export async function parseAuthFormData(request: Request) {
   };
 }
 
+/** Any valid email signs in, as long as the password is long enough. */
 export function authenticateLogin(email: string, password: string): AuthResult {
-  if (email === MOCK_EMAIL && password === MOCK_PASSWORD) {
+  if (EMAIL_PATTERN.test(email) && password.length >= MIN_PASSWORD_LENGTH) {
     return {ok: true, message: 'Login successful. Welcome back!'};
   }
   return {ok: false, error: 'Invalid login'};
@@ -201,8 +201,6 @@ export async function validateLogin(
     }),
   );
 }
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Validates the signup form, then the registration against DataDome Account

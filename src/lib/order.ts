@@ -2,6 +2,8 @@
  * Mock order processing for demo checkout.
  */
 
+import type {Cart} from '~/lib/types';
+
 export type OrderPayload = {
   email: string;
   name: string;
@@ -12,7 +14,7 @@ export type OrderPayload = {
 };
 
 export type OrderResult =
-  | {ok: true; message: string; orderId: string}
+  | {ok: true; message: string; orderId: string; cart?: Cart}
   | {ok: false; error: string};
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,7 +67,7 @@ export function processOrder(payload: OrderPayload): OrderResult {
     return {ok: false, error: 'Please enter a valid CVC.'};
   }
 
-  const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
+  const orderId = `ORD-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 
   return {
     ok: true,

@@ -29,7 +29,7 @@ Open [http://localhost:4321](http://localhost:4321) (Astro dev default).
 
 ## Demo credentials
 
-- **Login:** `jon@gmail.com` / `12345`
+- **Login:** any email with a password of 10+ characters. The form is pre-filled with random leaked-looking credentials (short passwords) to simulate credential stuffing.
 - **Checkout:** pre-filled mock payment details on the checkout page
 
 Auth, signup, and checkout endpoints accept form data and return success responses without persisting anything.

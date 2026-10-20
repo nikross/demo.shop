@@ -1,7 +1,8 @@
 import {useState} from 'react';
-import {ProcessedOrder} from '~/components/ProcessedOrder';
 import type {AuthResult} from '~/lib/auth';
+import {MIN_PASSWORD_LENGTH} from '~/lib/credentials';
 import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
+import {signIn} from '~/lib/session';
 
 export function SignupForm() {
   const [result, setResult] = useState<AuthResult | null>(null);
@@ -9,30 +10,29 @@ export function SignupForm() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get('email') ?? '').trim();
+    const password = String(formData.get('password') ?? '');
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setResult({ok: false, error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`});
+      return;
+    }
     setIsSubmitting(true);
     setResult(null);
-    const form = event.currentTarget;
-    const formData = new FormData(form);
     const response = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        email: String(formData.get('email') ?? ''),
-        password: String(formData.get('password') ?? ''),
-      }),
+      body: JSON.stringify({email, password}),
     });
     const result = (await response.json()) as AuthResult;
     if (result.dataDome) console.log('[DataDome]', result.dataDome);
+    if (result.ok) {
+      signIn(email);
+      window.location.assign('/profile?welcome=signup');
+      return;
+    }
     setResult(result);
     setIsSubmitting(false);
-  }
-
-  if (result?.ok) {
-    return (
-      <div className="mx-auto w-full max-w-md">
-        <ProcessedOrder subtitle={result.message} />
-      </div>
-    );
   }
 
   return (
@@ -45,7 +45,18 @@ export function SignupForm() {
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="signup-password" className="text-sm font-medium text-neutral-700">Password</label>
-          <input id="signup-password" name="password" type="password" required className={inputClassName} />
+          <input
+            id="signup-password"
+            name="password"
+            type="password"
+            required
+            minLength={MIN_PASSWORD_LENGTH}
+            aria-describedby="signup-password-hint"
+            className={inputClassName}
+          />
+          <p id="signup-password-hint" className="text-xs text-neutral-500">
+            At least {MIN_PASSWORD_LENGTH} characters.
+          </p>
         </div>
         <button type="submit" disabled={isSubmitting} className={`${primaryButtonClassName} w-full`}>
           {isSubmitting ? 'Signing up…' : 'Sign up'}

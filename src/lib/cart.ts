@@ -2,7 +2,6 @@ import {getVariantById} from '~/lib/catalog';
 import type {Cart, CartLine, CartService, Money} from '~/lib/types';
 
 const CART_COOKIE = 'mock-cart';
-const AUTH_COOKIE = 'mock-auth';
 
 type CartCookieData = {
   lines: Array<{variantId: string; quantity: number}>;
@@ -155,14 +154,6 @@ export function createCartService(cookieHeader: string): CartService {
       return {cart: buildCart(data) ?? emptyCart(), headers: withCartHeaders(data)};
     },
   };
-}
-
-export function isLoggedIn(cookieHeader: string): boolean {
-  return new RegExp(`${AUTH_COOKIE}=1`).test(cookieHeader);
-}
-
-export function authSuccessCookie(): string {
-  return `${AUTH_COOKIE}=1; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`;
 }
 
 export function getCartCookieHeader(cartData: CartCookieData): string {

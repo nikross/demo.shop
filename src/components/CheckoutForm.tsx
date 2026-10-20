@@ -1,15 +1,18 @@
 import {useState} from 'react';
 import {ProcessedOrder} from '~/components/ProcessedOrder';
+import {dispatchCartUpdated} from '~/components/CartForm';
 import type {Cart} from '~/lib/types';
 import type {OrderResult} from '~/lib/order';
 import {MOCK_CHECKOUT} from '~/lib/mock-data';
 import {inputClassName, primaryButtonClassName, textareaClassName} from '~/lib/form-classes';
 import {EurMoney} from '~/components/EurMoney';
+import {loadProfile, useSignedInEmail} from '~/lib/session';
 
 export function CheckoutForm({cart}: {cart: Cart | null}) {
   const [result, setResult] = useState<OrderResult | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const lines = cart?.lines?.nodes ?? [];
+  const contact = useCheckoutContact();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,7 +32,9 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
         cardCvc: String(formData.get('cardCvc') ?? ''),
       }),
     });
-    setResult((await response.json()) as OrderResult);
+    const result = (await response.json()) as OrderResult;
+    if (result.ok && result.cart) dispatchCartUpdated(result.cart);
+    setResult(result);
     setIsSubmitting(false);
   }
 
@@ -75,10 +80,11 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
               {result.error}
             </p>
           ) : null}
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <input name="email" type="email" required defaultValue={MOCK_CHECKOUT.email} className={inputClassName} placeholder="Email" />
-            <input name="name" type="text" required defaultValue={MOCK_CHECKOUT.name} className={inputClassName} placeholder="Name" />
-            <textarea name="deliveryAddress" required rows={3} defaultValue={MOCK_CHECKOUT.deliveryAddress} className={textareaClassName} placeholder="Address" />
+          {/* Keyed so the default values refresh once the session profile is read. */}
+          <form key={JSON.stringify(contact)} className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <input name="email" type="email" required defaultValue={contact.email} className={inputClassName} placeholder="Email" />
+            <input name="name" type="text" required defaultValue={contact.name} className={inputClassName} placeholder="Name" />
+            <textarea name="deliveryAddress" required rows={3} defaultValue={contact.deliveryAddress} className={textareaClassName} placeholder="Address" />
             <input name="cardNumber" required defaultValue={MOCK_CHECKOUT.cardNumber} className={inputClassName} placeholder="Card number" />
             <div className="grid grid-cols-2 gap-4">
               <input name="cardExpiry" required defaultValue={MOCK_CHECKOUT.cardExpiry} className={inputClassName} placeholder="Expiry" />
@@ -92,4 +98,22 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
       </div>
     </div>
   );
+}
+
+/** Contact details from the signed-in user's profile, or the mock defaults. */
+function useCheckoutContact() {
+  const signedInEmail = useSignedInEmail();
+  if (!signedInEmail) return MOCK_CHECKOUT;
+  const profile = loadProfile(signedInEmail);
+  return {
+    email: profile.email,
+    name: [profile.firstName, profile.lastName].filter(Boolean).join(' '),
+    deliveryAddress: [
+      profile.address,
+      [profile.zip, profile.city].filter(Boolean).join(' '),
+      profile.country,
+    ]
+      .filter(Boolean)
+      .join('\n'),
+  };
 }

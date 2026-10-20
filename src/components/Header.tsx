@@ -1,5 +1,6 @@
 import type {Cart, Menu} from '~/lib/types';
 import {useAside} from '~/components/Aside';
+import {useSignedInEmail} from '~/lib/session';
 
 const headerNavLinkClassName =
   'text-black no-underline transition hover:no-underline hover:opacity-80';
@@ -10,14 +11,14 @@ const headerNavButtonClassName =
 export function Header({
   menu,
   cart,
-  isLoggedIn,
   currentPath,
 }: {
   menu: Menu;
   cart: Cart | null;
-  isLoggedIn: boolean;
   currentPath: string;
 }) {
+  const signedInEmail = useSignedInEmail();
+
   return (
     <header className="header">
       <a href="/" className={headerNavLinkClassName}>
@@ -26,8 +27,8 @@ export function Header({
       <HeaderMenu menu={menu} viewport="desktop" currentPath={currentPath} />
       <nav className="header-ctas" role="navigation">
         <HeaderMenuMobileToggle />
-        {isLoggedIn ? (
-          <span className="text-sm text-neutral-600">Signed in</span>
+        {signedInEmail ? (
+          <a href="/profile" title={signedInEmail} className={headerNavLinkClassName}>Profile</a>
         ) : (
           <a href="/login" className={headerNavLinkClassName}>Sign in</a>
         )}
