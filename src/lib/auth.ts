@@ -6,6 +6,7 @@
 
 import type {IncomingMessage} from 'node:http';
 import {
+  AccountUpdateEvent,
   DataDome,
   LoginEvent,
   RegistrationEvent,
@@ -14,7 +15,11 @@ import {
   type DataDomeEvent,
 } from '@datadome/fraud-sdk-node';
 import {waitUntil} from '@vercel/functions';
-import {EMAIL_PATTERN, MIN_PASSWORD_LENGTH} from '~/lib/credentials';
+import {
+  EMAIL_PATTERN,
+  MIN_PASSWORD_LENGTH,
+  type Profile,
+} from '~/lib/credentials';
 
 /** DataDome decision details, returned to the browser for demo debugging. */
 export type DataDomeInfo = {
@@ -88,7 +93,7 @@ function toIncomingMessage(request: Request): IncomingMessage {
   } as unknown as IncomingMessage;
 }
 
-type Label = 'Login' | 'Sign up';
+type Label = 'Login' | 'Sign up' | 'Profile update';
 
 const SKIPPED: DataDomeInfo = {
   operation: 'skipped',
@@ -244,4 +249,74 @@ export async function validateSignup(
     message: 'Sign up successful! (Demo only — no account was created.)',
     dataDome: check.dataDome,
   };
+}
+
+/** ISO 3166-1 alpha-2 codes for the countries used by the demo profiles. */
+const COUNTRY_CODES: Record<string, string> = {
+  australia: 'AU',
+  austria: 'AT',
+  brazil: 'BR',
+  'czech republic': 'CZ',
+  estonia: 'EE',
+  france: 'FR',
+  germany: 'DE',
+  ireland: 'IE',
+  italy: 'IT',
+  netherlands: 'NL',
+  poland: 'PL',
+  spain: 'ES',
+  sweden: 'SE',
+  switzerland: 'CH',
+  'united kingdom': 'GB',
+  'united states': 'US',
+};
+
+/**
+ * Validates a profile change against DataDome Account Protect before it is
+ * saved. The account stays identified by the email the user signed in with,
+ * even when the update changes it.
+ * https://docs.datadome.co/docs/account-protect-account-update
+ */
+export async function validateProfileUpdate(
+  request: Request,
+  clientAddress: string,
+  accountEmail: string,
+  profile: Profile,
+): Promise<AuthResult> {
+  if (!EMAIL_PATTERN.test(profile.email)) {
+    return {ok: false, error: 'Please enter a valid email address.'};
+  }
+
+  const client = getDataDomeClient();
+  if (!client) {
+    return {ok: true, message: 'Profile saved.', dataDome: SKIPPED};
+  }
+
+  const phone = profile.phone.replace(/[^\d+]/g, '');
+  const check = await validateWithDataDome(
+    client,
+    'Profile update',
+    accountEmail,
+    request,
+    clientAddress,
+    new AccountUpdateEvent({
+      account: accountEmail,
+      user: {
+        id: accountEmail,
+        email: profile.email,
+        firstName: profile.firstName || undefined,
+        lastName: profile.lastName || undefined,
+        phone: phone || undefined,
+        address: {
+          line1: profile.address || undefined,
+          city: profile.city || undefined,
+          zipCode: profile.zip || undefined,
+          countryCode: COUNTRY_CODES[profile.country.trim().toLowerCase()],
+        },
+      },
+      authentication: {type: 'local', mode: 'password'},
+    }),
+  );
+  if (!check.ok) return check;
+  return {ok: true, message: 'Profile saved.', dataDome: check.dataDome};
 }

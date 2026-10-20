@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import type {AuthResult} from '~/lib/auth';
 import {inputClassName, primaryButtonClassName} from '~/lib/form-classes';
 import {loadProfile, saveProfile, signOut, useSignedInEmail, type Profile} from '~/lib/session';
 
@@ -16,17 +17,30 @@ const FIELDS: {name: keyof Profile; label: string; type?: string; autoComplete: 
 export function ProfileForm({welcome}: {welcome: string | null}) {
   const signedInEmail = useSignedInEmail();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [result, setResult] = useState<AuthResult | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (signedInEmail && !profile) setProfile(loadProfile(signedInEmail));
   }, [signedInEmail, profile]);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  // DataDome validates the account update first; only allowed changes are saved.
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!profile) return;
-    saveProfile(signedInEmail ?? profile.email, {...profile, email: profile.email.trim()});
-    setSaved(true);
+    if (!profile || !signedInEmail) return;
+    setIsSubmitting(true);
+    setResult(null);
+    const updated = {...profile, email: profile.email.trim()};
+    const response = await fetch('/api/profile', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({accountEmail: signedInEmail, profile: updated}),
+    });
+    const result = (await response.json()) as AuthResult;
+    if (result.dataDome) console.log('[DataDome]', result.dataDome);
+    if (result.ok) saveProfile(signedInEmail, updated);
+    setResult(result);
+    setIsSubmitting(false);
   }
 
   if (!signedInEmail || !profile) {
@@ -68,20 +82,24 @@ export function ProfileForm({welcome}: {welcome: string | null}) {
               required={field.name === 'email'}
               value={profile[field.name]}
               onChange={(event) => {
-                setSaved(false);
+                setResult(null);
                 setProfile({...profile, [field.name]: event.target.value});
               }}
               className={inputClassName}
             />
           </div>
         ))}
-        <button type="submit" className={`${primaryButtonClassName} w-full`}>
-          Save profile
+        <button type="submit" disabled={isSubmitting} className={`${primaryButtonClassName} w-full`}>
+          {isSubmitting ? 'Saving…' : 'Save profile'}
         </button>
       </form>
-      {saved ? (
+      {result?.ok ? (
         <p role="status" className="text-sm text-green-700">
-          Profile saved.
+          {result.message}
+        </p>
+      ) : result ? (
+        <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {result.error}
         </p>
       ) : null}
       <a href="/login" onClick={signOut} className="text-sm font-medium text-neutral-900 underline">
