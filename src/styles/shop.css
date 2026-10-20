@@ -149,15 +149,17 @@ aside li {
   transform: translateX(calc(var(--aside-width) * -1));
 }
 
-/* left-hand aside (mobile menu) */
+/* left-hand aside (mobile menu); capped at 85vw so a strip stays tappable to close it */
 .overlay-left aside {
   left: calc(-1 * var(--aside-width));
   right: auto;
+  width: min(var(--aside-width), 85vw);
 }
 
 .overlay-left .close-outside {
   left: auto;
   right: 0;
+  width: calc(100% - min(var(--aside-width), 85vw));
 }
 
 .overlay-left.expanded aside {
