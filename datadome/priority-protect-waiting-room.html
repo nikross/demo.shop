@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>You're in line</title>
+  <style>
+    :root {
+      --bg: #07070c;
+      --card: rgba(22, 22, 34, 0.72);
+      --card-solid: #161622;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f4f4f8;
+      --muted: #a3a3b8;
+      --faint: #6e6e85;
+      --accent-a: #7c5cff;
+      --accent-b: #ff5ca8;
+      --accent-c: #24d3ee;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Required by Priority Protect: panels start hidden and are revealed by the platform. */
+    .hidden { display: none; }
+
+    html, body { height: 100%; }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ---------- Background ---------- */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.95;
+      will-change: transform;
+    }
+
+    .blob-1 {
+      width: 60vmax; height: 60vmax;
+      top: -22vmax; left: -18vmax;
+      background: radial-gradient(circle at 30% 30%, #7c5cff, rgba(124, 92, 255, 0) 70%);
+      animation: drift-1 26s ease-in-out infinite alternate;
+    }
+    .blob-2 {
+      width: 52vmax; height: 52vmax;
+      bottom: -24vmax; right: -16vmax;
+      background: radial-gradient(circle at 60% 60%, #ff5ca8, rgba(255, 92, 168, 0) 70%);
+      animation: drift-2 32s ease-in-out infinite alternate;
+    }
+    .blob-3 {
+      width: 40vmax; height: 40vmax;
+      top: 38%; left: 52%;
+      background: radial-gradient(circle, #24d3ee, rgba(36, 211, 238, 0) 70%);
+      opacity: 0.7;
+      animation: drift-3 38s ease-in-out infinite alternate;
+    }
+    .blob-4 {
+      width: 34vmax; height: 34vmax;
+      top: 58%; left: -8vmax;
+      background: radial-gradient(circle, #ff9f43, rgba(255, 159, 67, 0) 70%);
+      opacity: 0.6;
+      animation: drift-4 30s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift-1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(14vmax, 8vmax) scale(1.12); }
+      100% { transform: translate(6vmax, 18vmax) scale(0.95); }
+    }
+    @keyframes drift-2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(-16vmax, -6vmax) scale(1.1); }
+      100% { transform: translate(-6vmax, -18vmax) scale(0.92); }
+    }
+    @keyframes drift-3 {
+      0%   { transform: translate(-50%, -50%) scale(0.9); }
+      50%  { transform: translate(-80%, -20%) scale(1.15); }
+      100% { transform: translate(-30%, -70%) scale(1); }
+    }
+    @keyframes drift-4 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(20vmax, -10vmax) scale(1.2); }
+    }
+
+    /* Soft vignette + fine grain keep the gradients from banding. */
+    .bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(7, 7, 12, 0) 30%, rgba(7, 7, 12, 0.35) 80%, rgba(7, 7, 12, 0.7) 100%);
+    }
+    .bg::after {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      opacity: 0.06;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ---------- Card ---------- */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      padding: 40px 36px 28px;
+      border-radius: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.06) inset,
+        0 30px 80px -20px rgba(0, 0, 0, 0.6);
+      -webkit-backdrop-filter: blur(24px) saturate(140%);
+      backdrop-filter: blur(24px) saturate(140%);
+      text-align: center;
+      animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .card { background: var(--card-solid); }
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .pulse {
+      position: relative;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #3ee08f;
+    }
+    .pulse::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #3ee08f;
+      animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+    @keyframes ping {
+      75%, 100% { transform: scale(2.6); opacity: 0; }
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: clamp(26px, 6vw, 32px);
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .lead {
+      margin: 12px auto 0;
+      max-width: 36ch;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ---------- Panels ---------- */
+    .panel {
+      margin-top: 28px;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid var(--border);
+    }
+    .panel + .panel { margin-top: 12px; }
+
+    .label {
+      color: var(--faint);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .opening-date {
+      display: block;
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .position-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .position {
+      font-size: clamp(48px, 14vw, 64px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      background: linear-gradient(120deg, var(--accent-c), var(--accent-a) 45%, var(--accent-b));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .of-size {
+      color: var(--muted);
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+    .of-size span { color: var(--text); font-weight: 600; }
+
+    .track {
+      position: relative;
+      height: 6px;
+      margin-top: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      overflow: hidden;
+    }
+    .track::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 40%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(124, 92, 255, 0), var(--accent-a), var(--accent-b), rgba(255, 92, 168, 0));
+      animation: sweep 2.2s ease-in-out infinite;
+    }
+    @keyframes sweep {
+      from { left: -40%; }
+      to   { left: 100%; }
+    }
+
+    .hint {
+      margin-top: 14px;
+      color: var(--faint);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ---------- Footer ---------- */
+    .meta {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      gap: 6px;
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .meta span[data-priorityprotect-var] { color: var(--muted); }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      word-break: break-all;
+    }
+
+    @media (max-width: 420px) {
+      .card { padding: 32px 22px 22px; border-radius: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blob, .card, .pulse::after, .track::after { animation: none; }
+      .track::after { left: 30%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <main class="card" role="main">
+    <div class="status"><span class="pulse"></span>Waiting room</div>
+
+    <h1>You're in line</h1>
+    <p class="lead">We're experiencing high demand right now. Keep this page open and you'll be let in automatically as soon as it's your turn.</p>
+
+    <div class="panel hidden" data-priorityprotect-var="openingDatePanel">
+      <div class="label">Opens at</div>
+      <span class="opening-date" data-priorityprotect-var="openingDate"></span>
+    </div>
+
+    <div class="panel hidden" data-priorityprotect-var="detailsPanel" aria-live="polite">
+      <div class="label">Your position</div>
+      <div class="position-row">
+        <span class="position" data-priorityprotect-var="position"></span>
+      </div>
+      <div class="of-size">of <span data-priorityprotect-var="size"></span> people waiting</div>
+      <div class="track" aria-hidden="true"></div>
+      <p class="hint">Please don't refresh — you'd risk losing your spot.</p>
+    </div>
+
+    <div class="meta">
+      <div>Last updated <span data-priorityprotect-var="lastUpdateDateTime"></span></div>
+      <div>Request ID <span class="mono" data-priorityprotect-var="requestId"></span></div>
+    </div>
+  </main>
+</body>
+</html>
