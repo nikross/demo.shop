@@ -186,6 +186,8 @@ export type PaginatedConnection<T> = {
     hasPreviousPage: boolean;
     startCursor: string | null;
     endCursor: string | null;
+    /** `cursor` for the previous page; null when that's the first page (no cursor). */
+    previousCursor: string | null;
   };
 };
 

@@ -142,6 +142,8 @@ export function paginate<T>(
   }
   const nodes = items.slice(start, start + first);
   const end = start + nodes.length - 1;
+  // The cursor is the index of the item before a page's first item.
+  const previousStart = Math.max(0, start - first);
 
   return {
     nodes,
@@ -150,6 +152,7 @@ export function paginate<T>(
       hasPreviousPage: start > 0,
       startCursor: nodes.length ? String(start) : null,
       endCursor: nodes.length ? String(end) : null,
+      previousCursor: previousStart > 0 ? String(previousStart - 1) : null,
     },
   };
 }

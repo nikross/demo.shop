@@ -7,22 +7,20 @@ interface Props {
 
 const {connection} = Astro.props;
 const url = Astro.url;
-const prevCursor = connection.pageInfo.hasPreviousPage
-  ? String(Number(connection.pageInfo.startCursor ?? 0) - 1)
-  : null;
-const nextCursor = connection.pageInfo.hasNextPage
-  ? connection.pageInfo.endCursor
-  : null;
+const {hasPreviousPage, hasNextPage, previousCursor, endCursor} =
+  connection.pageInfo;
 
+/** The current URL with `cursor` set, or removed for the first page. */
 function linkFor(cursor: string | null) {
-  if (!cursor) return null;
   const params = new URLSearchParams(url.searchParams);
-  params.set('cursor', cursor);
-  return `?${params.toString()}`;
+  if (cursor) params.set('cursor', cursor);
+  else params.delete('cursor');
+  const query = params.toString();
+  return query ? `?${query}` : url.pathname;
 }
 
-const prevLink = linkFor(prevCursor);
-const nextLink = linkFor(nextCursor);
+const prevLink = hasPreviousPage ? linkFor(previousCursor) : null;
+const nextLink = hasNextPage && endCursor ? linkFor(endCursor) : null;
 const paginationLinkClass =
   'inline-flex items-center gap-1 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:border-neutral-900 hover:text-neutral-900';
 ---
