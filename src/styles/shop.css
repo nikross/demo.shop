@@ -187,6 +187,51 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
+* Dark page theme
+* --------------------------------------------------
+* Applied to the page's <main> and footer (PageShell); the top nav and the
+* drawers stay light. Instead of dark: variants on every component, this
+* remaps the Tailwind palette the components use, so e.g. text-neutral-900
+* renders near-white and bg-neutral-100 a dark input background here.
+*/
+.theme-dark {
+  color-scheme: dark;
+  color: #e5e5e5;
+
+  /* neutral: light → dark surfaces, dark → light text */
+  --color-neutral-50: #1a1a1a; /* raised surfaces (cards, panels) */
+  --color-neutral-100: #1f1f1f; /* inputs, footer */
+  --color-neutral-200: #2e2e2e; /* borders, dividers */
+  --color-neutral-300: #404040; /* input borders */
+  --color-neutral-400: #737373; /* placeholders, hover borders */
+  --color-neutral-500: #a3a3a3;
+  --color-neutral-600: #b3b3b3; /* secondary text */
+  --color-neutral-700: #d4d4d4; /* labels */
+  --color-neutral-800: #e5e5e5; /* primary button hover */
+  --color-neutral-900: #f5f5f5; /* primary text, primary buttons */
+  --color-neutral-950: #fafafa;
+
+  /* alerts and notices: dark tinted boxes with light text */
+  --color-red-50: #450a0a;
+  --color-red-200: #7f1d1d;
+  --color-red-700: #fca5a5;
+  --color-green-50: #052e16;
+  --color-green-200: #14532d;
+  --color-green-700: #86efac;
+  --color-green-800: #bbf7d0;
+  --color-yellow-50: #422006;
+  --color-yellow-200: #713f12;
+  --color-yellow-300: #854d0e;
+  --color-yellow-900: #fef08a;
+}
+
+/* reset.css colors links black */
+.theme-dark a {
+  color: inherit;
+}
+
+/*
+* --------------------------------------------------
 * components/Header
 * --------------------------------------------------
 */

@@ -17,7 +17,7 @@ export function AddToCartButton({
       {({pending}) => (
         <button
           type="submit"
-          className="mt-2 w-full cursor-pointer rounded-md bg-neutral-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-2 w-full cursor-pointer rounded-md bg-neutral-900 px-6 py-3 text-sm font-medium text-neutral-50 transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={disabled ?? pending}
         >
           {children}

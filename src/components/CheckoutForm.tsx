@@ -57,7 +57,7 @@ export function CheckoutForm({cart}: {cart: Cart | null}) {
               Your cart is empty. <a href="/collections" className="underline">Browse products</a>
             </p>
           ) : (
-            <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
+            <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-neutral-50">
               {lines.map((line) => (
                 <li key={line.id} className="mb-0 flex items-center gap-4 p-4">
                   {line.merchandise.image && (

@@ -38,7 +38,7 @@ export function PageShell({
         currentPath={currentPath}
       />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <main className="theme-dark mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>
 
@@ -49,7 +49,7 @@ export function PageShell({
 
 function Footer({menu, currentPath}: {menu: Menu; currentPath: string}) {
   return (
-    <footer className="mt-auto border-t border-neutral-200 bg-neutral-100">
+    <footer className="theme-dark mt-auto border-t border-neutral-200 bg-neutral-100">
       <nav className="flex flex-wrap justify-center gap-4 px-4 py-4" role="navigation">
         {menu.items.map((item) => {
           if (!item.url) return null;

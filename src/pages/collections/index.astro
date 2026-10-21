@@ -17,7 +17,7 @@ const collections = paginate(getAllCollections(), pagination);
         {collections.nodes.map((collection) => (
           <a
             href={`/collections/${collection.handle}`}
-            class="group flex flex-col gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-white no-underline transition hover:border-neutral-400 hover:shadow-md"
+            class="group flex flex-col gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50 no-underline transition hover:border-neutral-400 hover:shadow-md"
           >
             {collection.image && (
               <ShopImage

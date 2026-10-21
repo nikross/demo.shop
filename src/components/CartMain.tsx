@@ -29,7 +29,7 @@ export function CartMain({
           <a
             href="/collections"
             onClick={close}
-            className="inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-neutral-900 px-6 text-sm font-medium text-white no-underline transition hover:bg-neutral-800"
+            className="inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-neutral-900 px-6 text-sm font-medium text-neutral-50 no-underline transition hover:bg-neutral-800"
           >
             Continue shopping →
           </a>

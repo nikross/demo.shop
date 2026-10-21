@@ -19,7 +19,7 @@ const isHighDemand = HIGH_DEMAND_HANDLES.has(product.handle);
 <a
   href={`/products/${product.handle}`}
   class:list={[
-    'group flex flex-col gap-3 overflow-hidden rounded-lg border bg-white no-underline transition hover:no-underline hover:shadow-md',
+    'group flex flex-col gap-3 overflow-hidden rounded-lg border bg-neutral-50 no-underline transition hover:no-underline hover:shadow-md',
     isHighDemand
       ? 'border-red-500 ring-2 ring-red-500/30'
       : 'border-neutral-200 hover:border-neutral-400',

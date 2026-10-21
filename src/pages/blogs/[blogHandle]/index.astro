@@ -21,7 +21,7 @@ const articles = paginate(blog.articles, pagination);
         {articles.nodes.map((article) => (
           <a
             href={`/blogs/${blog.handle}/${article.handle}`}
-            class="group flex flex-col gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-white no-underline transition hover:border-neutral-400 hover:shadow-md"
+            class="group flex flex-col gap-3 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50 no-underline transition hover:border-neutral-400 hover:shadow-md"
           >
             {article.image && (
               <ShopImage
